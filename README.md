@@ -18,11 +18,11 @@ OpenAuthster is a **multi-repo project** consisting of the following repositorie
 
 ### Core Repositories
 
-| Repository                                                        | Description                                                                                          |
-| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| **[openauth-multitenant-server](../openauth-multitenant-server)** | Cloudflare Worker containing the OpenAuth issuer server with multi-tenant capabilities               |
-| **[openauth-webui](../openauth-webui)**                           | Web UI dashboard for managing projects, customizing themes, and configuring authentication providers |
-| **[openauth-webui-shared-types](../openauth-webui-shared-types)** | Shared TypeScript types, components, and client-side code for connecting to the OpenAuthster issuer  |
+| Repository                                                                         | Description                                                                                          |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **[openauth-multitenant-server](https://github.com/shpaw415/OpenAuthSter-issuer)** | Cloudflare Worker containing the OpenAuth issuer server with multi-tenant capabilities               |
+| **[openauth-webui](https://github.com/shpaw415/OpenAuthSter-webUI)**               | Web UI dashboard for managing projects, customizing themes, and configuring authentication providers |
+| **[openauth-webui-shared-types](https://github.com/shpaw415/OpenAuthSter-shared)** | Shared TypeScript types, components, and client-side code for connecting to the OpenAuthster issuer  |
 
 ### Client SDKs
 
