@@ -75,6 +75,37 @@ OpenAuthster is a **multi-repo project** consisting of the following repositorie
 | -------------------------------------------------------------------- | ------------------ | --------------------------- |
 | **[openauthster-doc](https://github.com/shpaw415/openauthster-doc)** | `openauthster-doc` | Official documentation site |
 
+## Workspace Commands
+
+The workspace root now includes an orchestration layer for running the most common tasks across the runtime repositories without changing directories.
+
+Run these from this repository:
+
+```bash
+bun run install:core
+bun run check
+bun run test
+bun run build
+```
+
+To include docs as well:
+
+```bash
+bun run install:all
+bun run check:all
+bun run test:all
+bun run build:all
+```
+
+For targeted execution:
+
+```bash
+bun run workspace -- test --repo=issuer,shared
+bun run workspace -- check --scope=all --continue-on-error
+```
+
+This is the first migration phase toward a real monorepo. The source trees are still in sibling repositories, but the control plane now lives in the workspace root. See `MONOREPO.md` for the staged migration approach.
+
 ## Getting Started
 
 OpenAuthster requires deploying both the issuer server and WebUI. Follow this sequence:
