@@ -24,7 +24,7 @@ const REPOS: RepoConfig[] = [
 		tasks: {
 			install: ["bun", "install"],
 			check: ["bun", "run", "check"],
-			test: ["bun", "test"],
+			test: ["bun", "test", "--preload", "./tests/wasm-preload.ts"],
 			build: ["bun", "run", "check"],
 		},
 	},
