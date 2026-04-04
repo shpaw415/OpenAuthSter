@@ -8,9 +8,33 @@ import { Icon } from "@iconify/react";
 import Editor from "@monaco-editor/react";
 import { navigate } from "@utils";
 import Mustache from "mustache";
+import type * as monacoModule from "monaco-editor";
 import type { EmailTemplateProps } from "openauth-webui-shared-types";
 import { type FC, useCallback, useEffect, useMemo, useState } from "react";
 import { transform } from "sucrase";
+
+type MonacoWithHtmlCssDefaults = typeof monacoModule & {
+	languages: typeof monacoModule.languages & {
+		html: {
+			htmlDefaults: {
+				options: {
+					suggest?: Record<string, boolean>;
+				};
+				setOptions: (options: {
+					suggest?: Record<string, boolean>;
+				}) => void;
+			};
+		};
+		css: {
+			cssDefaults: {
+				options: {
+					validate?: boolean;
+				};
+				setOptions: (options: { validate?: boolean }) => void;
+			};
+		};
+	};
+};
 
 export const OBJECT_DEFAULT_HTML_TEMPLATE = await Bun.file(
 	"src/assets/email-template.html",
@@ -335,6 +359,26 @@ export default function EmailTemplatesManage() {
 		}
 	}, []);
 
+	const handleTemplateEditorBeforeMount = useCallback(
+		(monaco: typeof monacoModule) => {
+			const htmlCssMonaco = monaco as MonacoWithHtmlCssDefaults;
+
+			htmlCssMonaco.languages.html.htmlDefaults.setOptions({
+				...htmlCssMonaco.languages.html.htmlDefaults.options,
+				suggest: {
+					...(htmlCssMonaco.languages.html.htmlDefaults.options.suggest ?? {}),
+					html5: true,
+				},
+			});
+
+			htmlCssMonaco.languages.css.cssDefaults.setOptions({
+				...htmlCssMonaco.languages.css.cssDefaults.options,
+				validate: true,
+			});
+		},
+		[],
+	);
+
 	if (isEditMode && isLoading) {
 		return (
 			<div className="flex items-center justify-center h-48">
@@ -361,6 +405,11 @@ export default function EmailTemplatesManage() {
 
 	return (
 		<div className="h-[calc(100dvh-56px)] sm:h-[calc(100dvh-64px)] flex flex-col overflow-hidden">
+			<style>{`
+				.email-template-editor .monaco-editor .find-widget {
+					right: 4rem !important;
+				}
+			`}</style>
 			{/* Notification */}
 			{notification && (
 				<div
@@ -518,7 +567,7 @@ export default function EmailTemplatesManage() {
 			<div className="flex-1 flex min-h-0">
 				{/* Left: Monaco Editor */}
 				<div
-					className={`flex-col flex-1 min-w-0 min-h-0 ${mobileTab === "editor" ? "flex" : "hidden sm:flex"}`}
+					className={`email-template-editor flex-col flex-1 min-w-0 min-h-0 ${mobileTab === "editor" ? "flex" : "hidden sm:flex"}`}
 				>
 					<div className="shrink-0 flex items-center px-3 py-1.5 bg-gray-800 border-b border-gray-700">
 						<span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
@@ -528,7 +577,9 @@ export default function EmailTemplatesManage() {
 					<div className="flex-1 min-h-0">
 						<Editor
 							height="100%"
-							defaultLanguage="html"
+							beforeMount={handleTemplateEditorBeforeMount}
+							language="html"
+							path="email-template.html"
 							value={emailTemplateProps.body}
 							onChange={handleEditorChange}
 							theme="vs-dark"
@@ -537,11 +588,26 @@ export default function EmailTemplatesManage() {
 								fontSize: 14,
 								wordWrap: "on",
 								lineNumbers: "on",
+								hover: {
+									sticky: false,
+								},
+								find: {
+									addExtraSpaceOnTop: true,
+								},
 								scrollBeyondLastLine: false,
 								automaticLayout: true,
 								tabSize: 2,
 								formatOnPaste: true,
 								formatOnType: true,
+								quickSuggestions: {
+									other: true,
+									comments: false,
+									strings: true,
+								},
+								suggestOnTriggerCharacters: true,
+								acceptSuggestionOnEnter: "smart",
+								tabCompletion: "on",
+								fixedOverflowWidgets: true,
 							}}
 						/>
 					</div>

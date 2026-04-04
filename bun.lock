@@ -27,7 +27,7 @@
         "frame-master-svg-to-jsx-loader": "^0.1.0",
         "monaco-editor": "^0.55.1",
         "mustache": "^4.2.0",
-        "openauth-webui-shared-types": "https://github.com/shpaw415/OpenAuthSter-shared.git#v1.0.0",
+        "openauth-webui-shared-types": "https://github.com/shpaw415/OpenAuthSter-shared.git#v1.0.1",
         "quickjs-emscripten": "^0.32.0",
         "react": "^19.2.4",
         "react-dom": "^19.2.4",
@@ -1032,7 +1032,7 @@
 
     "oniguruma-to-es": ["oniguruma-to-es@4.3.4", "", { "dependencies": { "oniguruma-parser": "^0.12.1", "regex": "^6.0.1", "regex-recursion": "^6.0.2" } }, "sha512-3VhUGN3w2eYxnTzHn+ikMI+fp/96KoRSVK9/kMTcFqj1NRDh2IhQCKvYxDnWePKRXY/AqH+Fuiyb7VHSzBjHfA=="],
 
-    "openauth-webui-shared-types": ["openauthster-shared@github:shpaw415/OpenAuthSter-shared#a3ee56c", { "dependencies": { "@kagii/openauth": "^0.7.0", "@simplewebauthn/browser": "^13.3.0", "@simplewebauthn/server": "^13.3.0", "cloudflare": "^5.2.0", "mustache": "^4.2.0", "openauth-webui-shared-types": ".", "uqr": "^0.1.2", "valibot": "^1.3.1" }, "peerDependencies": { "drizzle-orm": "^0.45.1", "hono": "^4.12.2", "typescript": "^5.9.3" } }, "shpaw415-OpenAuthSter-shared-a3ee56c", "sha512-qRafQ7TnvWfCTGhikvzCycCIlAzheYbOfloZE6Ka2ZWvGbP+yk2d2vadwrF38jTpsVK0/4JC5O/72p7HLimW2A=="],
+    "openauth-webui-shared-types": ["openauthster-shared@github:shpaw415/OpenAuthSter-shared#814c9d6", { "dependencies": { "@kagii/openauth": "^0.7.0", "@simplewebauthn/browser": "^13.3.0", "@simplewebauthn/server": "^13.3.0", "cloudflare": "^5.2.0", "mustache": "^4.2.0", "openauth-webui-shared-types": ".", "uqr": "^0.1.2", "valibot": "^1.3.1" }, "peerDependencies": { "drizzle-orm": "^0.45.1", "hono": "^4.12.2", "typescript": "^5.9.3" } }, "shpaw415-OpenAuthSter-shared-814c9d6", "sha512-LFDV07KEpIuB4m/R2qWFl5eTF/JWBUgwdGCLkMQ5caTGc1az3tsapoGb9XkIgVab95TTtD08gdIzcmSBEkBEWg=="],
 
     "parent-module": ["parent-module@1.0.1", "", { "dependencies": { "callsites": "^3.0.0" } }, "sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g=="],
 
@@ -1678,7 +1678,7 @@
 
     "npm/yallist": ["yallist@5.0.0", "", {}, "sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw=="],
 
-    "openauth-webui-shared-types/openauth-webui-shared-types": ["openauth-webui-shared-types@file:../../.bun/install/cache/@GH@shpaw415-OpenAuthSter-shared-a3ee56c@@@1", {}],
+    "openauth-webui-shared-types/openauth-webui-shared-types": ["openauth-webui-shared-types@file:../../.bun/install/cache/@GH@shpaw415-OpenAuthSter-shared-814c9d6@@@1", {}],
 
     "parse-entities/@types/unist": ["@types/unist@2.0.11", "", {}, "sha512-CmBKiL6NNo/OqgmMn95Fk9Whlp2mtvIv+KNpQKN2F4SjvrEesubTRWGYSg+BnWZOnlCaSTU1sMpsBOzgbYhnsA=="],
 

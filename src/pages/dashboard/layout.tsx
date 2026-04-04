@@ -22,6 +22,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 	const auth = useAuth();
 	const { pendingCount } = useNotifications();
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+	const lastHrefRef = useRef<string>("");
 
 	const [VersionWarningMessage, setVersionWarningMessage] = useState<
 		string | null
@@ -103,6 +104,44 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 			});
 		}
 	}, [auth]);
+
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+
+		lastHrefRef.current = window.location.href;
+
+		const closeMenuOnLocationChange = () => {
+			const nextHref = window.location.href;
+
+			if (lastHrefRef.current !== nextHref) {
+				lastHrefRef.current = nextHref;
+				setMobileMenuOpen(false);
+			}
+		};
+
+		const originalPushState = window.history.pushState;
+		const originalReplaceState = window.history.replaceState;
+
+		window.history.pushState = function (...args) {
+			originalPushState.apply(window.history, args);
+			closeMenuOnLocationChange();
+		};
+
+		window.history.replaceState = function (...args) {
+			originalReplaceState.apply(window.history, args);
+			closeMenuOnLocationChange();
+		};
+
+		window.addEventListener("popstate", closeMenuOnLocationChange);
+		window.addEventListener("hashchange", closeMenuOnLocationChange);
+
+		return () => {
+			window.history.pushState = originalPushState;
+			window.history.replaceState = originalReplaceState;
+			window.removeEventListener("popstate", closeMenuOnLocationChange);
+			window.removeEventListener("hashchange", closeMenuOnLocationChange);
+		};
+	}, []);
 
 	// Show loading while checking auth
 	if (!auth?.isLoaded && typeof window !== "undefined") {
@@ -210,7 +249,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 						{/* Mobile Menu Button */}
 						<button
 							type="button"
-							className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"
+							className="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"
 							onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
 							aria-expanded={mobileMenuOpen}
 							aria-controls="mobile-menu"
@@ -228,7 +267,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 				{/* Mobile Menu */}
 				<div
 					id="mobile-menu"
-					className={`md:hidden transition-all duration-200 ease-in-out overflow-hidden ${
+					className={`lg:hidden transition-all duration-200 ease-in-out overflow-hidden ${
 						mobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
 					}`}
 				>

@@ -26,7 +26,7 @@ export type Roles = "user";
 
 export type AuthClientType = ReturnType<typeof createClient>;
 
-const clientCache = new Map<string, CacheStoreData<Roles, never>>();
+const clientCache = new Map<string, CacheStoreData<Roles, never, never>>();
 
 export const createClient = ({
 	token,
@@ -48,8 +48,9 @@ export const createClient = ({
 		subject,
 		token,
 		authFlowCallbacks: {
-			onLoginRequired: () => {
+			onLoginRequired: (client) => {
 				console.log("Login required");
+				client.login();
 			},
 		},
 		cache_provider: {

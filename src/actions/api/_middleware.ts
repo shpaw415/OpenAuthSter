@@ -4,6 +4,7 @@ import {
 	type PrivateSessionData,
 	type PublicSessionData,
 	type RequestDataContext,
+    type Roles,
 } from "@auth";
 import type { EventContext } from "@cloudflare/workers-types";
 import type { ProviderType } from "openauth-webui-shared-types";
@@ -45,12 +46,7 @@ export async function onRequest(
 				user_identifier: "admin@example.com",
 				role: "admin",
 			}),
-		} as OpenAuthsterClient<
-			PublicSessionData,
-			PrivateSessionData,
-			"admin" | "user",
-			{ provider: ProviderType; role: "admin" | "user" }
-		>;
+		} as OpenAuthsterClient<PublicSessionData, PrivateSessionData, Roles, never, never>;
 
 		return await context.next();
 	}
