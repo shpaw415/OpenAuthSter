@@ -3,7 +3,13 @@
 	"name": "openauthster-personal-webui",
 	"pages_build_output_dir": ".frame-master/build",
 	"compatibility_date": "2025-11-09",
-	"d1_databases": [],
+	"d1_databases": [
+		{
+			"binding": "PROJECT_DB",
+			"database_name": "m2-tech-openauthster",
+			"database_id": "ec135b74-a90d-491d-bec2-70fa247d8824"
+		}
+	],
 	"vars": {
 		"BUN_VERSION": "1.3.10",
 		"SKIP_DEPENDENCY_INSTALL": "true",
