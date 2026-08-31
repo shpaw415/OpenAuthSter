@@ -2,7 +2,7 @@ import {
 	type CacheStoreData,
 	createOpenAuthsterClient,
 	defaultSubjectSchema,
-} from "openauth-webui-shared-types/client/user";
+} from "openauthster-shared/client/user";
 
 export const subject = defaultSubjectSchema;
 

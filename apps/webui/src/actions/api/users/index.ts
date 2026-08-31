@@ -5,7 +5,7 @@ import {
 	isClientIdValid,
 	OTFusersTable,
 	projectTable,
-} from "openauth-webui-shared-types/database";
+} from "openauthster-shared/database";
 import {
 	and,
 	desc,
@@ -13,8 +13,8 @@ import {
 	eq,
 	like,
 	sql,
-} from "openauth-webui-shared-types/drizzle";
-import { deleteUserWithAuthState } from "openauth-webui-shared-types/user/delete";
+} from "openauthster-shared/drizzle";
+import { deleteUserWithAuthState } from "openauthster-shared/user/delete";
 
 export type ProjectUser = {
 	id: string;

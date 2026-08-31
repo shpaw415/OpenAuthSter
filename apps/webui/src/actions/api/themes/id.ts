@@ -2,8 +2,8 @@ import type { RequestDataContext } from "@auth";
 import type { Theme } from "@kagii/openauth/ui/theme";
 import { ownerGroupConditions } from "@utils/server";
 import { getContext } from "frame-master-plugin-cloudflare-pages-functions-action/context";
-import { uiStyleTable } from "openauth-webui-shared-types/database";
-import { and, drizzle, eq } from "openauth-webui-shared-types/drizzle";
+import { uiStyleTable } from "openauthster-shared/database";
+import { and, drizzle, eq } from "openauthster-shared/drizzle";
 import type { UITheme } from "./index";
 
 // GET /api/themes/:id - Get a specific theme

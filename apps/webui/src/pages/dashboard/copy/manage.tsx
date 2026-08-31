@@ -1,7 +1,7 @@
 import { useCopyTemplate, useCopyTemplates } from "@hooks/useCopyTemplates";
 import type { CodeUICopy } from "@kagii/openauth/ui/code";
 import { navigate } from "@utils";
-import type { PasswordUICopy } from "openauth-webui-shared-types";
+import type { PasswordUICopy } from "openauthster-shared";
 import { useEffect, useState } from "react";
 
 // ──────────────────────────────────────────────

@@ -1,6 +1,6 @@
 import type { OnSuccessResponder } from "@kagii/openauth/issuer";
 import type { Prettify } from "@kagii/openauth/util";
-import type { authCodeType } from "openauth-webui-shared-types";
+import type { authCodeType } from "openauthster-shared";
 
 export function createExternalGlobalProjectConfig<CTXProperties = unknown>(
 	config: ExternalGlobalProjectConfig<CTXProperties>,

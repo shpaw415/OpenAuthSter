@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import type { Project } from "openauth-webui-shared-types";
+import type { Project } from "openauthster-shared";
 import type { InferInput } from "valibot";
 import type { subjects } from "../../openauth.config";
 

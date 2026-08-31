@@ -3,7 +3,7 @@ import {
 	COOKIE_INVITE_ID,
 	COOKIE_NAME,
 	type Project,
-} from "openauth-webui-shared-types";
+} from "openauthster-shared";
 
 export function createInviteIdCookieContent(
 	inviteId: string,

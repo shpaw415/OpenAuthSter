@@ -1,9 +1,9 @@
 import type { RequestDataContext } from "@auth";
 import { ownerGroupConditions } from "@utils/server";
 import { getContext } from "frame-master-plugin-cloudflare-pages-functions-action/context";
-import type { EmailTemplateProps } from "openauth-webui-shared-types";
-import { emailTemplatesTable } from "openauth-webui-shared-types/database";
-import { and, drizzle, eq } from "openauth-webui-shared-types/drizzle";
+import type { EmailTemplateProps } from "openauthster-shared";
+import { emailTemplatesTable } from "openauthster-shared/database";
+import { and, drizzle, eq } from "openauthster-shared/drizzle";
 import type { EmailTemplate } from "./index";
 
 // GET /api/templates/[name] - Get template by name

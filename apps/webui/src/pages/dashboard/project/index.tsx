@@ -15,17 +15,17 @@ import type {
 	ProviderCategory,
 	ProviderConfig,
 	ProviderType,
-} from "openauth-webui-shared-types";
+} from "openauthster-shared";
 import {
 	getProviderMeta,
 	getProvidersByCategory,
-} from "openauth-webui-shared-types";
+} from "openauthster-shared";
 import type {
 	ExtendedWebHookConfig,
 	WebHookConfig,
 	WebHookEvents,
-} from "openauth-webui-shared-types/webhook/types";
-import { WebHookEventsDetails } from "openauth-webui-shared-types/webhook/types";
+} from "openauthster-shared/webhook/types";
+import { WebHookEventsDetails } from "openauthster-shared/webhook/types";
 import { useCallback, useEffect, useState } from "react";
 
 const CATEGORIES: { id: ProviderCategory; label: string; icon: string }[] = [

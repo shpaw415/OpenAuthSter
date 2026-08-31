@@ -1,7 +1,7 @@
 import type { RequestDataContext } from "@auth";
 import { ownerGroupConditions } from "@utils/server";
 import { getContext } from "frame-master-plugin-cloudflare-pages-functions-action/context";
-import { LogsTable, projectTable } from "openauth-webui-shared-types/database";
+import { LogsTable, projectTable } from "openauthster-shared/database";
 import {
 	and,
 	desc,
@@ -9,7 +9,7 @@ import {
 	eq,
 	inArray,
 	sql,
-} from "openauth-webui-shared-types/drizzle";
+} from "openauthster-shared/drizzle";
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 200;

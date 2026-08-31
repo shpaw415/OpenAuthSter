@@ -23,8 +23,8 @@ import type {
 	ProviderType,
 	QRProviderConfig,
 	SlackProviderConfig,
-} from "openauth-webui-shared-types";
-import { getProviderMeta } from "openauth-webui-shared-types";
+} from "openauthster-shared";
+import { getProviderMeta } from "openauthster-shared";
 import React, {
 	type ComponentType,
 	createContext,

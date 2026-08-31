@@ -1,4 +1,4 @@
-import { PROVIDER_REGISTRY } from "openauth-webui-shared-types";
+import { PROVIDER_REGISTRY } from "openauthster-shared";
 
 // GET /api/providers - Get all available provider types and metadata
 export async function GET() {

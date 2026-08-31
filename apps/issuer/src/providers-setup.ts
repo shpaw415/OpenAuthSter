@@ -22,8 +22,8 @@ import type {
 	ProviderType,
 	QRProviderConfig,
 	SlackProviderConfig,
-} from "openauth-webui-shared-types";
-import { parseDBCopyTemplate } from "openauth-webui-shared-types";
+} from "openauthster-shared";
+import { parseDBCopyTemplate } from "openauthster-shared";
 import type {
 	CognitoUserInfo,
 	DiscordUserInfo,
@@ -38,14 +38,14 @@ import type {
 	TwitchUserInfo,
 	XUserInfo,
 	YahooUserInfo,
-} from "openauth-webui-shared-types/client/user";
+} from "openauthster-shared/client/user";
 import {
 	emailTemplatesTable,
 	WebUiCopyTemplateTable,
-} from "openauth-webui-shared-types/database";
-import { and, drizzle, eq } from "openauth-webui-shared-types/drizzle";
-import type { QRProviderOnSuccessData } from "openauth-webui-shared-types/providers/custom/qr/index.ts";
-import { WebHook } from "openauth-webui-shared-types/webhook";
+} from "openauthster-shared/database";
+import { and, drizzle, eq } from "openauthster-shared/drizzle";
+import type { QRProviderOnSuccessData } from "openauthster-shared/providers/custom/qr/index.ts";
+import { WebHook } from "openauthster-shared/webhook";
 import getGlobalConfig from "../openauth.config";
 import DefaultEmailTemplateBody from "./defaults/email";
 import type { EndpointCtx } from "./endpoints/types.ts";
@@ -1133,10 +1133,10 @@ const qrBuilder: ConfigType<
 
 		const { QrUI, QRProvider } = (await import(
 			//@ts-expect-error
-			"../node_modules/openauth-webui-shared-types/providers/build/qr/index.js"
+			"openauthster-shared/providers/custom/out/qr/index.js"
 		)) as {
-			QrUI: typeof import("openauth-webui-shared-types/providers/custom/qr/QRUI.tsx").QrUI;
-			QRProvider: typeof import("openauth-webui-shared-types/providers/custom/qr/index.ts").QRProvider;
+			QrUI: typeof import("openauthster-shared/providers/custom/qr/QRUI.tsx").QrUI;
+			QRProvider: typeof import("openauthster-shared/providers/custom/qr/index.ts").QRProvider;
 		};
 		const issuer = await import("./endpoints/index").then((m) => m.endpoints);
 		const subject = await import("../openauth.config").then((m) => m.subjects);
@@ -1172,8 +1172,8 @@ const passkeyBuilder: ConfigType<
 	provider: async ({ env, copyTemplate, project, ctx }) => {
 		const mod = (await import(
 			//@ts-expect-error
-			"../node_modules/openauth-webui-shared-types/providers/build/passkey/index.js"
-		)) as typeof import("../node_modules/openauth-webui-shared-types/providers/custom/passkey/index.ts");
+			"openauthster-shared/providers/custom/out/passkey/index.js"
+		)) as typeof import("../node_modules/openauthster-shared/providers/custom/passkey/index.ts");
 
 		const autorizedOrigin = toAuthorizeOrigin({
 			request: ctx.req.raw,

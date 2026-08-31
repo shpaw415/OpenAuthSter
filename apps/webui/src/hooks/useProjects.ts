@@ -5,7 +5,7 @@ import {
 	PUT as updateProjectById,
 	type updateProjectParams,
 } from "@api/projects/manage";
-import type { Project, ProviderConfig } from "openauth-webui-shared-types";
+import type { Project, ProviderConfig } from "openauthster-shared";
 import { useCallback, useEffect, useState } from "react";
 import { createServerCache, useServerCacheValue } from "./serverCache";
 import { useAuth } from "./useAuth";

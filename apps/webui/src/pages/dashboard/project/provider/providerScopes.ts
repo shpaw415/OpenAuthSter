@@ -1,4 +1,4 @@
-import type { ProviderType } from "openauth-webui-shared-types";
+import type { ProviderType } from "openauthster-shared";
 
 export type ScopeOption = {
 	value: string;

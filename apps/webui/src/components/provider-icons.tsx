@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import type { ProviderType } from "openauth-webui-shared-types";
+import type { ProviderType } from "openauthster-shared";
 
 const PROVIDER_ICON_MAP: Record<ProviderType, string> = {
 	// Form-based & generic - Lucide

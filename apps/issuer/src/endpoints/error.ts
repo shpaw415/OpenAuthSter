@@ -1,5 +1,5 @@
 import type { ContentfulStatusCode } from "hono/utils/http-status";
-import type { Project } from "openauth-webui-shared-types";
+import type { Project } from "openauthster-shared";
 import { getTokenFromRequest } from "./shared";
 import type { Params } from "./types";
 

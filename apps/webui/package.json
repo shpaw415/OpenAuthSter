@@ -1,5 +1,6 @@
 {
 	"name": "openauth-webui",
+	"private": true,
 	"version": "1.0.2",
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.10",
@@ -36,7 +37,7 @@
 		"frame-master-svg-to-jsx-loader": "^0.1.0",
 		"monaco-editor": "^0.55.1",
 		"mustache": "^4.2.0",
-		"openauth-webui-shared-types": "https://github.com/shpaw415/OpenAuthSter-shared.git#v1.0.2",
+		"openauthster-shared": "workspace:*",
 		"quickjs-emscripten": "^0.32.0",
 		"react": "^19.2.5",
 		"react-dom": "^19.2.5",
@@ -58,7 +59,7 @@
 		"init:db": "wrangler d1 migrations apply PROJECT_DB",
 		"db:generate": "bun --bun drizzle-kit generate",
 		"db:migrate": "bun --bun drizzle-kit migrate",
-		"update:share": "bun update openauth-webui-shared-types",
+		"update:share": "bun update openauthster-shared",
 		"dev:deploy": "NODE_ENV=production bun frame-master build && wrangler pages deploy"
 	}
 }

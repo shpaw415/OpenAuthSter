@@ -1,7 +1,7 @@
 import type { RequestDataContext } from "@auth";
 import { getContext } from "frame-master-plugin-cloudflare-pages-functions-action/context";
-import { inviteTable } from "openauth-webui-shared-types";
-import { and, drizzle, eq, or } from "openauth-webui-shared-types/drizzle";
+import { inviteTable } from "openauthster-shared";
+import { and, drizzle, eq, or } from "openauthster-shared/drizzle";
 import { invites } from "./share";
 /**
  * GET /api/invites - Get all invites for the authenticated user

@@ -5,8 +5,8 @@ import {
 	insertLog,
 	type Project,
 	WebUiInviteLinkTable,
-} from "openauth-webui-shared-types";
-import { drizzle, eq } from "openauth-webui-shared-types/drizzle";
+} from "openauthster-shared";
+import { drizzle, eq } from "openauthster-shared/drizzle";
 import { log } from "../share";
 import { RequestError } from "./error";
 import type { EndpointCtx } from "./types";

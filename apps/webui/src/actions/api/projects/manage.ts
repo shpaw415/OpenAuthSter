@@ -5,7 +5,7 @@ import {
 	createWebUiProject,
 	type Project,
 	PUBLIC_CLIENT_ID,
-} from "openauth-webui-shared-types";
+} from "openauthster-shared";
 import {
 	DeleteOTFusersTable,
 	insertLog,
@@ -18,8 +18,8 @@ import {
 	webAuthnTokenAccessTable,
 	webauthnChallengesTable,
 	webauthnCredentialsTable,
-} from "openauth-webui-shared-types/database";
-import { and, drizzle, eq, or } from "openauth-webui-shared-types/drizzle";
+} from "openauthster-shared/database";
+import { and, drizzle, eq, or } from "openauthster-shared/drizzle";
 import {
 	createClient,
 	deleteCustomDomainForProject,

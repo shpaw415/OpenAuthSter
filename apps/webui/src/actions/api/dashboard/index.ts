@@ -1,14 +1,14 @@
 import type { RequestDataContext } from "@auth";
 import { onSelfHosted, ownerGroupConditions } from "@utils/server";
 import { getContext } from "frame-master-plugin-cloudflare-pages-functions-action/context";
-import type { Project } from "openauth-webui-shared-types";
+import type { Project } from "openauthster-shared";
 import {
 	createWebUiProject,
 	LogsTable,
 	OTFusersTable,
 	projectTable,
 	WebHookTable,
-} from "openauth-webui-shared-types/database";
+} from "openauthster-shared/database";
 import {
 	and,
 	desc,
@@ -17,7 +17,7 @@ import {
 	gt,
 	or,
 	sql,
-} from "openauth-webui-shared-types/drizzle";
+} from "openauthster-shared/drizzle";
 
 export type DashboardKPIs = {
 	totalProjects: number;

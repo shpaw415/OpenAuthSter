@@ -3,8 +3,8 @@ import { getContext } from "frame-master-plugin-cloudflare-pages-functions-actio
 import {
 	projectTable,
 	WebUiInviteLinkTable,
-} from "openauth-webui-shared-types/database";
-import { drizzle, eq } from "openauth-webui-shared-types/drizzle";
+} from "openauthster-shared/database";
+import { drizzle, eq } from "openauthster-shared/drizzle";
 
 export async function POST(params: {
 	clientID: string;

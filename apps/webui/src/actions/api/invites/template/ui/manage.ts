@@ -1,7 +1,7 @@
 import type { RequestDataContext } from "@auth";
 import { getContext } from "frame-master-plugin-cloudflare-pages-functions-action/context";
-import { uiStyleTable } from "openauth-webui-shared-types/database";
-import { and, drizzle, eq } from "openauth-webui-shared-types/drizzle";
+import { uiStyleTable } from "openauthster-shared/database";
+import { and, drizzle, eq } from "openauthster-shared/drizzle";
 import { invites } from "../../share";
 
 /**

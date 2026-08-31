@@ -7,7 +7,7 @@ import type {
 } from "@kagii/openauth/client";
 import { createSubjects } from "@kagii/openauth/subject";
 import type { JWTPayload } from "jose";
-import type { ProviderType } from "openauth-webui-shared-types";
+import type { ProviderType } from "openauthster-shared";
 import type { InferOutput } from "valibot";
 import * as v from "valibot";
 import {

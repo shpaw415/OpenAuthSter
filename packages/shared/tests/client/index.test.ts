@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
-import type { ProviderType } from "openauth-webui-shared-types";
+import type { ProviderType } from "openauthster-shared";
 import { OpenAuthsterClient } from "../../client/user";
 
 function createRefreshSuccess() {

@@ -2,7 +2,7 @@ import { ReadonlyJsonEditor } from "@components/ReadonlyJsonEditor";
 import { DELETE as deleteLogs, GET as getLogs } from "@api/logs";
 import { useParams } from "@hooks/useParams";
 import { useProjects } from "@hooks/useProjects";
-import type { LogsTable } from "openauth-webui-shared-types/database";
+import type { LogsTable } from "openauthster-shared/database";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const LOGS_PER_PAGE = 50;

@@ -9,7 +9,7 @@ import {
 	type UpdateCopyTemplateParams,
 	PUT as updateCopyTemplateByName,
 } from "@api/templates/copy/id";
-import type { parseDBCopyTemplate } from "openauth-webui-shared-types";
+import type { parseDBCopyTemplate } from "openauthster-shared";
 import { useCallback, useEffect, useState } from "react";
 import { createServerCache, useServerCacheValue } from "./serverCache";
 

@@ -5,12 +5,12 @@ import {
 	type CopyDataSelection,
 	insertLog,
 	PUBLIC_CLIENT_ID,
-} from "openauth-webui-shared-types";
+} from "openauthster-shared";
 import {
 	parseDBCopyTemplate,
 	WebUiCopyTemplateTable,
-} from "openauth-webui-shared-types/database";
-import { drizzle, eq } from "openauth-webui-shared-types/drizzle";
+} from "openauthster-shared/database";
+import { drizzle, eq } from "openauthster-shared/drizzle";
 
 // GET /api/copy - List all copy templates
 export async function GET(): Promise<{

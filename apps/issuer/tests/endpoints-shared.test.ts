@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import type { Project } from "openauth-webui-shared-types";
+import type { Project } from "openauthster-shared";
 import {
 	getSecretFromRequest,
 	getTokenFromRequest,

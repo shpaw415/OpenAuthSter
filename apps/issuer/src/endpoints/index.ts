@@ -26,18 +26,18 @@ import {
 	type ProviderType,
 	PUBLIC_CLIENT_ID,
 	totpTable,
-} from "openauth-webui-shared-types";
-import type { TotpError } from "openauth-webui-shared-types/client/errors";
+} from "openauthster-shared";
+import type { TotpError } from "openauthster-shared/client/errors";
 import type {
 	TOTPBackupRestoreData,
 	TOTPElevateData,
 	TOTPResponse,
 	TOTPSetupData,
-} from "openauth-webui-shared-types/client/mfa";
+} from "openauthster-shared/client/mfa";
 import type {
 	defaultSubjectSchema,
 	ResponseData,
-} from "openauth-webui-shared-types/client/user";
+} from "openauthster-shared/client/user";
 // OpenAuthster shared imports
 import {
 	createWebUiProject,
@@ -48,25 +48,25 @@ import {
 	uiStyleTable,
 	webauthnChallengesTable,
 	webauthnCredentialsTable,
-} from "openauth-webui-shared-types/database";
-import type { OTFUsersParsedType } from "openauth-webui-shared-types/database/types";
+} from "openauthster-shared/database";
+import type { OTFUsersParsedType } from "openauthster-shared/database/types";
 import {
 	and,
 	type DrizzleD1Database,
 	drizzle,
 	eq,
 	or,
-} from "openauth-webui-shared-types/drizzle";
+} from "openauthster-shared/drizzle";
 import {
 	type UserResponseSchemaType as _UserResponseSchemaType,
 	type GetUserListFilters,
 	UserListSchemaValidation,
-} from "openauth-webui-shared-types/endpoints";
-import { createSelfClient } from "openauth-webui-shared-types/providers/utils";
-import { deleteUserWithAuthState } from "openauth-webui-shared-types/user/delete";
-import { getCookiesFromRequest } from "openauth-webui-shared-types/utils";
-import { WebHook } from "openauth-webui-shared-types/webhook";
-import type { WebHookEvents } from "openauth-webui-shared-types/webhook/types";
+} from "openauthster-shared/endpoints";
+import { createSelfClient } from "openauthster-shared/providers/utils";
+import { deleteUserWithAuthState } from "openauthster-shared/user/delete";
+import { getCookiesFromRequest } from "openauthster-shared/utils";
+import { WebHook } from "openauthster-shared/webhook";
+import type { WebHookEvents } from "openauthster-shared/webhook/types";
 import { parse } from "valibot";
 import globalOpenAutsterConfig, { subjects } from "../../openauth.config";
 import packageJson from "../../package.json" with { type: "json" };

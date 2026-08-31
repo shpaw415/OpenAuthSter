@@ -1,12 +1,12 @@
 import type { RequestDataContext } from "@auth";
 import { ownerGroupConditions } from "@utils/server";
 import { getContext } from "frame-master-plugin-cloudflare-pages-functions-action/context";
-import type { CopyDataSelection } from "openauth-webui-shared-types";
+import type { CopyDataSelection } from "openauthster-shared";
 import {
 	parseDBCopyTemplate,
 	WebUiCopyTemplateTable,
-} from "openauth-webui-shared-types/database";
-import { and, drizzle, eq } from "openauth-webui-shared-types/drizzle";
+} from "openauthster-shared/database";
+import { and, drizzle, eq } from "openauthster-shared/drizzle";
 
 export type CopyTemplate = ReturnType<typeof parseDBCopyTemplate>;
 

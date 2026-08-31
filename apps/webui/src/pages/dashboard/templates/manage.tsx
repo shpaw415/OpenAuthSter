@@ -9,7 +9,7 @@ import Editor from "@monaco-editor/react";
 import { navigate } from "@utils";
 import Mustache from "mustache";
 import type * as monacoModule from "monaco-editor";
-import type { EmailTemplateProps } from "openauth-webui-shared-types";
+import type { EmailTemplateProps } from "openauthster-shared";
 import { type FC, useCallback, useEffect, useMemo, useState } from "react";
 import { transform } from "sucrase";
 

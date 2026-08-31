@@ -6,7 +6,7 @@ import type { Hono } from "hono";
 import type { JSX } from "hono/jsx/jsx-runtime";
 import { jsxRenderer } from "hono/jsx-renderer";
 import { createLocalJWKSet, type JSONWebKeySet, jwtVerify } from "jose";
-import type { ProviderType } from "openauth-webui-shared-types";
+import type { ProviderType } from "openauthster-shared";
 import * as v from "valibot";
 import type { QRHandshake } from "../DurableObject";
 

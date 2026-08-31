@@ -19,7 +19,7 @@ const REPOS: RepoConfig[] = [
 	{
 		key: "issuer",
 		label: "Issuer",
-		relPath: "../openauth-multitenant-server",
+		relPath: "apps/issuer",
 		scope: "core",
 		tasks: {
 			install: ["bun", "install"],
@@ -31,7 +31,7 @@ const REPOS: RepoConfig[] = [
 	{
 		key: "webui",
 		label: "Web UI",
-		relPath: "../openauth-webui",
+		relPath: "apps/webui",
 		scope: "core",
 		tasks: {
 			install: ["bun", "install"],
@@ -43,7 +43,7 @@ const REPOS: RepoConfig[] = [
 	{
 		key: "shared",
 		label: "Shared Types",
-		relPath: "../openauth-webui-shared-types",
+		relPath: "packages/shared",
 		scope: "core",
 		tasks: {
 			install: ["bun", "install"],
@@ -55,7 +55,7 @@ const REPOS: RepoConfig[] = [
 	{
 		key: "tester",
 		label: "Tester",
-		relPath: "../openauth-webui-tester",
+		relPath: "apps/tester",
 		scope: "core",
 		tasks: {
 			install: ["bun", "install"],
@@ -157,8 +157,8 @@ async function runRepoTask(repo: RepoConfig, task: TaskName): Promise<number> {
 
 	const cwd = join(ROOT_DIR, repo.relPath);
 	if (!existsSync(cwd)) {
-		console.error(`Skipping ${repo.label}: missing path ${cwd}`);
-		return 1;
+		console.log(`Skipping ${repo.label}: missing path ${cwd}`);
+		return 0;
 	}
 
 	console.log(`\n==> ${repo.label} (${task})`);

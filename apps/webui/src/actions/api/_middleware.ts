@@ -7,8 +7,8 @@ import {
     type Roles,
 } from "@auth";
 import type { EventContext } from "@cloudflare/workers-types";
-import type { ProviderType } from "openauth-webui-shared-types";
-import type { OpenAuthsterClient } from "openauth-webui-shared-types/client/user";
+import type { ProviderType } from "openauthster-shared";
+import type { OpenAuthsterClient } from "openauthster-shared/client/user";
 
 export async function onRequest(
 	context: EventContext<Env, never, RequestDataContext>,

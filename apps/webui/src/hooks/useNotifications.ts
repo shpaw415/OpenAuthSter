@@ -3,7 +3,7 @@ import { POST as acceptProjectInvite } from "@api/invites/project/accept";
 import { POST as acceptCopyTemplateInvite } from "@api/invites/template/copy/accept";
 import { POST as acceptEmailTemplateInvite } from "@api/invites/template/email/accept";
 import { POST as acceptUITemplateInvite } from "@api/invites/template/ui/accept";
-import type { inviteTable } from "openauth-webui-shared-types/database";
+import type { inviteTable } from "openauthster-shared/database";
 import { useCallback, useEffect, useState } from "react";
 import { createServerCache, useServerCacheValue } from "./serverCache";
 import { useAuth } from "./useAuth";

@@ -377,6 +377,8 @@ export type ProjectData<
 	primaryColor?: string;
 	emailFrom?: string;
 	roles?: string[];
+	clientType?: "confidential" | "public";
+	redirectURIs?: string[];
 	[key: string]: string | string[] | undefined;
 } & CTXProperties;
 

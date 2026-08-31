@@ -1,14 +1,14 @@
 import type { RequestDataContext } from "@auth";
 import { onSelfHosted, ownerGroupConditions } from "@utils/server";
 import { getContext } from "frame-master-plugin-cloudflare-pages-functions-action/context";
-import { projectTable } from "openauth-webui-shared-types";
-import { and, drizzle, eq } from "openauth-webui-shared-types/drizzle";
-import { WebHook } from "openauth-webui-shared-types/webhook";
+import { projectTable } from "openauthster-shared";
+import { and, drizzle, eq } from "openauthster-shared/drizzle";
+import { WebHook } from "openauthster-shared/webhook";
 import type {
 	ExtendedWebHookConfig,
 	WebHookConfig,
 	WebHookEvents,
-} from "openauth-webui-shared-types/webhook/types";
+} from "openauthster-shared/webhook/types";
 import type { ActionResponse } from "../../../api-helper";
 
 export async function GET({

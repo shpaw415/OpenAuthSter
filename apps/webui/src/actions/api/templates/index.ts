@@ -1,9 +1,9 @@
 import type { RequestDataContext } from "@auth";
 import { ownerGroupConditions } from "@utils/server";
 import { getContext } from "frame-master-plugin-cloudflare-pages-functions-action/context";
-import type { EmailTemplateProps } from "openauth-webui-shared-types";
-import { emailTemplatesTable } from "openauth-webui-shared-types/database";
-import { drizzle, eq, or } from "openauth-webui-shared-types/drizzle";
+import type { EmailTemplateProps } from "openauthster-shared";
+import { emailTemplatesTable } from "openauthster-shared/database";
+import { drizzle, eq, or } from "openauthster-shared/drizzle";
 
 export type EmailTemplate = typeof emailTemplatesTable.$inferSelect;
 

@@ -1,1 +1,1 @@
-export * from "openauth-webui-shared-types/database";
+export * from "openauthster-shared/database";

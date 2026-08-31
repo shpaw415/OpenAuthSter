@@ -1,5 +1,5 @@
-import { type Project, PUBLIC_CLIENT_ID } from "openauth-webui-shared-types";
-import { defaultSubjectSchema } from "openauth-webui-shared-types/client/user";
+import { type Project, PUBLIC_CLIENT_ID } from "openauthster-shared";
+import { defaultSubjectSchema } from "openauthster-shared/client/user";
 import type { InferOutput } from "valibot";
 import type { EndpointCtx } from "./src/endpoints/types";
 import { createExternalGlobalProjectConfig } from "./src/global-conf";

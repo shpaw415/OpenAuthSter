@@ -1,26 +1,11 @@
 {
-  "folders": [
-    {
-      "path": ".",
-    },
-    {
-      "path": "../openauth-multitenant-server",
-    },
-    {
-      "path": "../openauth-webui",
-    },
-    {
-      "path": "../openauth-webui-shared-types",
-    },
-    {
-      "path": "../openauth-webui-tester",
-    },
-    {
-      "path": "../openauthster",
-    },
-    {
-      "path": "../openauthster-doc",
-    },
-  ],
-  "settings": {},
+	"folders": [
+		{ "path": ".", "name": "openauthster" },
+		{ "path": "apps/issuer", "name": "issuer" },
+		{ "path": "apps/webui", "name": "webui" },
+		{ "path": "packages/shared", "name": "shared" },
+		{ "path": "sdk/ios", "name": "sdk-ios" },
+		{ "path": "sdk/android", "name": "sdk-android" }
+	],
+	"settings": {}
 }

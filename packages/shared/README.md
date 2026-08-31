@@ -719,7 +719,7 @@ function HomePage() {
 ## Directory Map
 
 ```text
-openauthster-shared/          # workspace folder: openauth-webui-shared-types
+openauthster-shared/          # workspace folder: openauthster-shared
 ├── index.ts                  # Main exports, provider registry, shared types, constants
 ├── utils.ts                  # Cookie and request helpers
 ├── client/

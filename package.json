@@ -1,21 +1,33 @@
 {
-	"name": "openauthster-workspace",
+	"name": "openauthster",
 	"private": true,
 	"type": "module",
-	"version": "0.1.0",
+	"version": "1.0.2",
+	"description": "OpenAuthster monorepo — issuer, shared client, WebUI, native SDKs",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/shpaw415/OpenAuthSter.git"
+	},
+	"workspaces": {
+		"packages": ["apps/*", "packages/*"]
+	},
 	"scripts": {
 		"workspace": "bun run ./scripts/workspace.ts",
-		"install:core": "bun run ./scripts/workspace.ts install --scope=core",
-		"install:all": "bun run ./scripts/workspace.ts install --scope=all",
+		"install:core": "bun install",
+		"install:all": "bun install",
 		"check": "bun run ./scripts/workspace.ts check --scope=core",
 		"check:all": "bun run ./scripts/workspace.ts check --scope=all",
 		"test": "bun run ./scripts/workspace.ts test --scope=core",
 		"test:all": "bun run ./scripts/workspace.ts test --scope=all",
+		"test:shared": "bun run --filter openauthster-shared test",
 		"build": "bun run ./scripts/workspace.ts build --scope=core",
 		"build:all": "bun run ./scripts/workspace.ts build --scope=all",
 		"docs:build": "bun run ./scripts/workspace.ts build --repo=docs"
 	},
 	"devDependencies": {
 		"@types/bun": "^1.3.11"
+	},
+	"engines": {
+		"bun": ">=1.2.0"
 	}
 }

@@ -1,8 +1,8 @@
 "no action";
 
 import type { createClient } from "@auth";
-import { inviteTable } from "openauth-webui-shared-types";
-import { and, drizzle, eq } from "openauth-webui-shared-types/drizzle";
+import { inviteTable } from "openauthster-shared";
+import { and, drizzle, eq } from "openauthster-shared/drizzle";
 
 export type InviteType =
 	| "project"

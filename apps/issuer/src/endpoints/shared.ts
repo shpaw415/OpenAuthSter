@@ -1,4 +1,4 @@
-import type { Project } from "openauth-webui-shared-types";
+import type { Project } from "openauthster-shared";
 
 export function getTokenFromRequest(request: Request): string | null {
 	const header = request.headers.get("Authorization");

@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import type {
 	CopyDataSelection,
 	parseDBCopyTemplate,
-} from "openauth-webui-shared-types";
+} from "openauthster-shared";
 import { type JSX, useState } from "react";
 
 type CopyTemplate = ReturnType<typeof parseDBCopyTemplate>;

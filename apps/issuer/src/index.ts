@@ -1,9 +1,9 @@
-import { insertLog } from "openauth-webui-shared-types/database";
+import { insertLog } from "openauthster-shared/database";
 import { endpoints } from "./endpoints";
 import { PartialRequestError, RequestError } from "./endpoints/error";
 import { log } from "./share";
 
-export { QRHandshake } from "openauth-webui-shared-types/providers/custom/DurableObject.ts";
+export { QRHandshake } from "openauthster-shared/providers/custom/DurableObject.ts";
 
 declare global {
 	var isLog: boolean;

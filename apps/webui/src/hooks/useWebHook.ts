@@ -8,7 +8,7 @@ import type {
 	ExtendedWebHookConfig,
 	WebHookConfig,
 	WebHookEvents,
-} from "openauth-webui-shared-types/webhook/types";
+} from "openauthster-shared/webhook/types";
 import { useCallback } from "react";
 import { createServerCache, useServerCacheValue } from "./serverCache";
 

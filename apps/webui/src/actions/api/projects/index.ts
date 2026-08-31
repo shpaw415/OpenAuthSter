@@ -5,14 +5,14 @@ import {
 	createWebUiProject,
 	type Project,
 	type ProviderConfig,
-} from "openauth-webui-shared-types";
+} from "openauthster-shared";
 import {
 	createUserTable,
 	insertLog,
 	isClientIdValid,
 	projectTable,
-} from "openauth-webui-shared-types/database";
-import { drizzle, eq } from "openauth-webui-shared-types/drizzle";
+} from "openauthster-shared/database";
+import { drizzle, eq } from "openauthster-shared/drizzle";
 import {
 	CloudflareClientError,
 	createClient,
