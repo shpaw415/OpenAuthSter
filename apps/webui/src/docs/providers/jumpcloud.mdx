@@ -1,0 +1,45 @@
+# JumpCloud SSO Setup
+
+Configure JumpCloud as an identity provider for your application.
+
+## Setup Steps
+
+1. Log in to the [JumpCloud Admin Console](https://console.jumpcloud.com)
+2. Navigate to **SSO** in the sidebar
+3. Click **Add New Application**
+4. Select **Custom OIDC App** or search for your application type
+5. Configure the application:
+   - **Display Label**: Your application name
+   - **Redirect URIs**: <props.RedirectURI value={props.redirectURI} />
+6. Save the application
+7. Copy the **Client ID** and **Client Secret** from the SSO tab
+
+## Configuration Fields
+
+| Field                       | Required | Description                                               |
+| --------------------------- | -------- | --------------------------------------------------------- |
+| Client ID                   | Yes      | The Client ID from JumpCloud Admin Console                |
+| Client Secret               | Yes      | The Client Secret from JumpCloud Admin Console            |
+| Scopes                      | No       | OAuth scopes to request (default: email) |
+| PKCE                        | No       | Enable PKCE for enhanced security                         |
+| Additional Query Parameters | No       | Extra parameters to include in the authorization URL      |
+
+## PKCE Support
+
+JumpCloud supports PKCE (Proof Key for Code Exchange). Enable it for enhanced security in your OAuth flow.
+
+## Recommended Scopes
+
+- `openid` - Required for OpenID Connect
+- `email` - Access to user's email address
+- `profile` - Access to user's basic profile information
+
+## User Assignment
+
+Make sure to assign users or user groups to your application in JumpCloud for them to be able to authenticate.
+
+## Useful Links
+
+- [JumpCloud Admin Console](https://console.jumpcloud.com)
+- [JumpCloud SSO Documentation](https://support.jumpcloud.com/support/s/article/single-sign-on-sso-with-oidc)
+- [JumpCloud OIDC Guide](https://support.jumpcloud.com/support/s/article/custom-oidc-application)

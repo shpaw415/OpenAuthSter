@@ -1,0 +1,33 @@
+# Pin Code Verification
+
+Configure email or SMS-based verification code authentication.
+
+## How It Works
+
+Users receive a one-time verification code via email or SMS to authenticate. This is a passwordless authentication method.
+
+## Configuration Options
+
+### Verification Mode
+
+- **Email Only**: Send codes via email
+- **SMS Only**: Send codes via SMS
+
+### Code Length
+
+Configure the number of digits in the verification code (4-8 digits). Longer codes are more secure but less convenient.
+
+## Configuration Fields
+
+| Field  | Required | Description                               |
+| ------ | -------- | ----------------------------------------- |
+| Mode   | Yes      | Verification method: email, phone         |
+| Length | No       | Number of digits in the code (default: 6) |
+
+## Best Practices
+
+- Use at least 6 digits for security
+
+## Important
+
+Make sure your email or SMS templates are properly configured in the **Templates** section before enabling this provider.

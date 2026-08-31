@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@import "@material/react-snackbar/dist/snackbar.css";
+
+@layer base {
+	pre,
+	code {
+		white-space: pre-wrap !important;
+		word-break: break-word !important;
+		overflow-wrap: anywhere !important;
+	}
+}

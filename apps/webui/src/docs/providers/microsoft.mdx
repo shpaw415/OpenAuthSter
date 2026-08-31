@@ -1,0 +1,65 @@
+# Microsoft Azure AD Setup
+
+Configure Microsoft Azure AD to allow users to sign in with their Microsoft accounts.
+
+## Setup Steps
+
+1. Go to the [Azure Portal](https://portal.azure.com)
+2. Navigate to **Azure Active Directory** > **App registrations**
+3. Click **New registration**
+4. Fill in the application details:
+   - **Name**: Your application name
+   - **Supported account types**: Choose based on your needs
+   - **Redirect URI**: Select "Web" and enter <props.RedirectURI value={props.redirectURI} />
+5. Click **Register**
+6. Copy the **Application (client) ID**
+7. Go to **Certificates & secrets** > **New client secret**
+8. Copy the secret value (you won't be able to see it again)
+
+## Configuration Fields
+
+| Field                       | Required | Description                                          |
+| --------------------------- | -------- | ---------------------------------------------------- |
+| Client ID                   | Yes      | The Application (client) ID from Azure               |
+| Client Secret               | Yes      | The client secret value from Azure                   |
+| Scopes                      | No       | Additional OAuth scopes to request (default: email)  |
+| Tenant ID                   | Yes      | The Azure AD tenant ID or domain                     |
+| PKCE                        | No       | Enable PKCE for enhanced security                    |
+| Additional Query Parameters | No       | Extra parameters to include in the authorization URL |
+
+## Tenant Configuration
+
+The Tenant ID determines who can sign in to your application:
+
+| Value           | Description                                     |
+| --------------- | ----------------------------------------------- |
+| `common`        | Users with both Microsoft accounts and Azure AD |
+| `organizations` | Users with Azure AD accounts only               |
+| `consumers`     | Users with personal Microsoft accounts only     |
+| `{tenant-id}`   | Users from a specific Azure AD tenant           |
+| `{domain.com}`  | Users from a specific domain                    |
+
+## PKCE Support
+
+Microsoft supports PKCE (Proof Key for Code Exchange). Enable it for enhanced security in public clients.
+
+## Additional Query Parameters
+
+Common parameters you might want to add:
+
+| Parameter     | Description                                                   |
+| ------------- | ------------------------------------------------------------- |
+| `prompt`      | Control login behavior (`login`, `consent`, `select_account`) |
+| `login_hint`  | Pre-fill the username/email field                             |
+| `domain_hint` | Skip home realm discovery (`consumers` or `organizations`)    |
+
+## Recommended Scopes
+
+- `openid` - Required for OpenID Connect
+- `email` - Access to user's email
+- `profile` - Access to user's basic profile
+
+## Useful Links
+
+- [Azure Portal](https://portal.azure.com)
+- [Microsoft Identity Documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/)

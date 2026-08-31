@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-04-04T00:37:22.083Z",
+  "images": {
+    "logo.png": {
+      "original": "logo.png",
+      "width": 743,
+      "height": 653,
+      "variants": [
+        {
+          "format": "webp",
+          "size": 320,
+          "path": "logo-320w.webp",
+          "width": 320,
+          "height": 281
+        }
+      ]
+    },
+    "logo.webp": {
+      "original": "logo.webp",
+      "width": 743,
+      "height": 653,
+      "variants": [
+        {
+          "format": "webp",
+          "size": 320,
+          "path": "logo-320w.webp",
+          "width": 320,
+          "height": 281
+        }
+      ]
+    }
+  }
+}

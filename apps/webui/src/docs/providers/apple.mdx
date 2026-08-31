@@ -1,0 +1,63 @@
+# Apple Sign In Setup
+
+Configure Apple Sign In to allow users to sign in with their Apple ID.
+
+## Setup Steps
+
+1. Go to the [Apple Developer Portal](https://developer.apple.com/account)
+2. Navigate to **Certificates, Identifiers & Profiles**
+3. Create an **App ID** with Sign In with Apple enabled
+4. Create a **Services ID** for web authentication
+5. Configure your **Return URL** (redirect URI) as <props.RedirectURI value={props.redirectURI} />
+6. Create a **Key** for Sign In with Apple and download it
+7. Note your **Team ID**, **Key ID**, and **Client ID** (Services ID)
+
+## Configuration Fields
+
+| Field                       | Required | Description                                          |
+| --------------------------- | -------- | ---------------------------------------------------- |
+| Client ID                   | Yes      | The Services ID from Apple Developer Portal          |
+| Client Secret               | Yes      | Generated JWT using your private key                 |
+| Scopes                      | No       | OAuth scopes to request (default: email)       |
+| PKCE                        | No       | Enable PKCE for enhanced security                    |
+| Additional Query Parameters | No       | Extra parameters to include in the authorization URL |
+
+## Client Secret Generation
+
+Apple requires a JWT as the client secret, which must be generated using:
+
+- Your **Team ID**
+- Your **Key ID**
+- Your **Private Key** (downloaded .p8 file)
+- The **Client ID** (Services ID)
+
+The JWT must be signed with ES256 algorithm and has a maximum validity of 6 months.
+
+## PKCE Support
+
+Apple supports PKCE (Proof Key for Code Exchange). Enable it for enhanced security in your OAuth flow.
+
+## Additional Query Parameters
+
+Common parameters you might want to add:
+
+| Parameter       | Description                               |
+| --------------- | ----------------------------------------- |
+| `response_mode` | Set to `form_post` for form POST response |
+
+## Recommended Scopes
+
+- `name` - Access to user's name (only on first sign-in)
+- `email` - Access to user's email address
+
+## Important Notes
+
+- User's name is only provided on the first authorization
+- Users can choose to hide their email (Apple provides a relay email)
+- The client secret JWT must be regenerated before expiration
+
+## Useful Links
+
+- [Apple Developer Portal](https://developer.apple.com/account)
+- [Sign In with Apple Documentation](https://developer.apple.com/sign-in-with-apple/)
+- [Sign In with Apple REST API](https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api)

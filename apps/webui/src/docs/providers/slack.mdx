@@ -1,0 +1,45 @@
+# Slack OAuth2 Setup
+
+Configure Slack OAuth2 to allow users to sign in with their Slack accounts.
+
+## Setup Steps
+
+1. Go to the [Slack API Portal](https://api.slack.com/apps)
+2. Click **Create New App** and choose **From scratch**
+3. Enter your app name and select your workspace
+4. Navigate to **OAuth & Permissions** in the sidebar
+5. Add your **Redirect URL** under "Redirect URLs"
+6. Copy the **Client ID** and **Client Secret** from **Basic Information**
+7. Note your **Team ID** (workspace ID) from your Slack workspace settings
+
+## Configuration Fields
+
+| Field         | Required | Description                                       |
+| ------------- | -------- | ------------------------------------------------- |
+| Client ID     | Yes      | The OAuth client ID from Slack API Portal         |
+| Client Secret | Yes      | The OAuth client secret from Slack API Portal     |
+| Team          | Yes      | Your Slack workspace Team ID                      |
+| Scopes        | No       | OAuth scopes to request (default: email)          |
+| PKCE          | No       | Enable PKCE (Proof Key for Code Exchange) support |
+
+## Finding Your Team ID
+
+1. Open Slack in your browser
+2. Your Team ID is in the URL: `https://app.slack.com/client/{TEAM_ID}/...`
+3. Or go to **Settings & administration** > **Workspace settings** > **About this workspace**
+
+## Recommended Scopes
+
+- `openid` - Required for OpenID Connect
+- `email` - Access to user's email address
+- `profile` - Access to user's basic profile information
+
+## PKCE Support
+
+Enable PKCE for enhanced security. PKCE (Proof Key for Code Exchange) adds an additional layer of protection against authorization code interception attacks.
+
+## Useful Links
+
+- [Slack API Portal](https://api.slack.com/apps)
+- [Slack OAuth Documentation](https://api.slack.com/authentication/oauth-v2)
+- [Slack Sign in with Slack](https://api.slack.com/authentication/sign-in-with-slack)
