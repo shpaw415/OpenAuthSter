@@ -1,0 +1,30 @@
+{
+	"$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+	"files": {
+		"includes": ["./src/**", "./openauth.config.ts", "./bin/**"]
+	},
+	"linter": {
+		"rules": {
+			"a11y": {
+				"noSvgWithoutTitle": "off",
+				"useAltText": "off",
+				"useButtonType": "off",
+				"useHtmlLang": "off"
+			},
+			"complexity": {
+				"noBannedTypes": "off",
+				"noUselessLoneBlockStatements": "off"
+			},
+			"style": {
+				"noDescendingSpecificity": "off",
+				"noNonNullAssertion": "off",
+				"useTemplate": "off"
+			},
+			"suspicious": {
+				"noConfusingLabels": "off",
+				"noConfusingVoidType": "off",
+				"noExplicitAny": "off"
+			}
+		}
+	}
+}
