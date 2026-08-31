@@ -1,0 +1,74 @@
+# Passkeys (WebAuthn)
+
+Configure passwordless authentication using Passkeys (WebAuthn) for a secure and user-friendly login experience.
+
+## Overview
+
+Passkeys (built on the WebAuthn standard) allow users to log in using cryptographic keys stored on their devices. Instead of a password, users authenticate using their device's screen lock (biometrics, PIN, or pattern). This method is phishing-resistant and eliminates the need for users to remember complex passwords.
+
+## How It Works
+
+1.  **Registration**: The user registers a new passkey on their device. The device generates a public-private key pair. The private key remains securely on the device, while the public key is sent to the server.
+2.  **Authorization**: When logging in, the server issues a challenge. The user's device signs this challenge with the private key
+    after user verification (e.g., FaceID, TouchID). The server verifies the signature using the stored public key.
+    The server returns a token to the client ( valid for 5 min ).
+3.  **Authentication**: The client will exchange the token with a code that will be used to obtain an access token.
+
+## Configuration
+
+To enable Passkey authentication, you need to configure the `WebAuthnProvider` in your OpenAuth server.
+
+## Client-Side Integration
+
+The OpenAuth client provides methods to handle passkey registration entirely from your application.
+
+### Registering a Passkey
+
+To register a passkey for the currently logged-in user:
+
+```typescript
+import { createOpenAuthsterClient } from "openauthster-shared/client/user";
+
+const client = createOpenAuthsterClient({
+  clientID: "my_app",
+  issuerURI: "https://auth.myapp.com",
+  redirectURI: "https://myapp.com",
+});
+
+// ... inside your component or logic
+async function registerPasskey() {
+  const result = await client.passkey.register();
+
+  if (result.success) {
+    console.log("Passkey registered successfully!");
+  } else {
+    console.error("Registration failed:", result.error);
+  }
+}
+```
+
+### Logging In
+
+When passkey is configured as a provider, users can log in using their passkey:
+
+```typescript
+async function loginWithPasskey() {
+  client.passkey.login();
+}
+client.init(); // This will intercept the login flow and trigger the passkey login if configured
+```
+
+```html
+<button onClick="{loginWithPasskey}">Login with Passkey</button>
+```
+
+## Security Considerations
+
+- **HTTPS Required**: WebAuthn API strictly requires a secure context (HTTPS). It will not work on HTTP (except for `localhost`).
+- **Device Support**: While most modern devices support passkeys, some older devices/browsers might not. Always handle the `NotSupportedError` gracefully.
+- **User Verification**: The provider defaults to requiring user verification (biometrics/PIN), ensuring that even if a device is stolen, the passkey cannot be used without the user's unlock method.
+
+## Troubleshooting
+
+- **"NotAllowedError"**: This usually means the user cancelled the biometric prompt or the operation timed out.
+- **"NotSupportedError"**: The browser or device does not support WebAuthn.

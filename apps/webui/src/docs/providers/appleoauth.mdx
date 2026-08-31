@@ -1,0 +1,62 @@
+# Apple OAuth 2.0 Provider Setup
+
+Configure Apple Sign In using the standard OAuth 2.0 flow with a client secret.
+
+## Setup Steps
+
+1. Go to the [Apple Developer Portal](https://developer.apple.com/account)
+2. Navigate to **Certificates, Identifiers & Profiles**
+3. Create an **App ID** with **Sign In with Apple** enabled
+4. Create a **Services ID** and configure your **Return URL** (redirect URI) as <props.RedirectURI value={props.redirectURI} />
+5. Create a **Key** for Sign In with Apple and download the `.p8` private key file
+6. Note your **Team ID**, **Key ID**, and **Client ID** (Services ID)
+7. Generate a signed JWT to use as your **Client Secret**
+
+## Configuration Fields
+
+| Field                       | Required | Description                                                    |
+| --------------------------- | -------- | -------------------------------------------------------------- |
+| Client ID                   | Yes      | The Services ID from Apple Developer Portal                    |
+| Client Secret               | Yes      | A signed JWT generated from your Apple private key             |
+| Scopes                      | No       | OAuth scopes to request (default: `email`)                     |
+| Response Mode               | No       | How Apple returns the authorization code (`form_post`, `query`)|
+| PKCE                        | No       | Enable PKCE for enhanced security                              |
+| Additional Query Parameters | No       | Extra parameters to include in the authorization URL           |
+
+## Client Secret Generation
+
+Apple requires a short-lived JWT as the client secret. Generate it using:
+
+- **Team ID** — found in your Apple Developer account
+- **Key ID** — the ID of the Sign In with Apple key you created
+- **Private Key** — the `.p8` file downloaded from Apple
+- **Client ID** — your Services ID (e.g. `com.example.app`)
+
+The JWT must be signed with the **ES256** algorithm and is valid for a maximum of **6 months**.
+
+## Response Mode
+
+| Value       | Description                                              |
+| ----------- | -------------------------------------------------------- |
+| `form_post` | Apple POSTs the authorization code to your redirect URL (recommended) |
+| `query`     | Apple appends the code as a query parameter in the redirect URL |
+
+Use `form_post` when your redirect URL is a server-side endpoint.
+
+## Recommended Scopes
+
+- `email` — Access to the user's email address
+- `name` — Access to the user's name (only provided on the **first** sign-in)
+
+## Important Notes
+
+- The user's name is **only provided on the first authorization**. Store it immediately.
+- Users may choose to **hide their real email**. Apple provides a relay email address instead.
+- The client secret JWT **must be regenerated before expiration** (max 6 months).
+- Apple's OAuth flow differs from standard OAuth 2.0; `form_post` response mode is strongly recommended.
+
+## Useful Links
+
+- [Apple Developer Portal](https://developer.apple.com/account)
+- [Sign In with Apple Documentation](https://developer.apple.com/sign-in-with-apple/)
+- [Generate and Validate Tokens](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens)

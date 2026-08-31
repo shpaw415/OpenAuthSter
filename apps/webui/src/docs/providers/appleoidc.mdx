@@ -1,0 +1,55 @@
+# Apple OIDC Provider Setup
+
+Configure Apple Sign In using the OpenID Connect (OIDC) flow. This mode uses Apple's OIDC discovery endpoint and does not require a client secret.
+
+## Setup Steps
+
+1. Go to the [Apple Developer Portal](https://developer.apple.com/account)
+2. Navigate to **Certificates, Identifiers & Profiles**
+3. Create an **App ID** with **Sign In with Apple** enabled
+4. Create a **Services ID** and configure your **Return URL** (redirect URI) as <props.RedirectURI value={props.redirectURI} />
+5. Note your **Client ID** (Services ID, e.g. `com.example.app`)
+
+## Configuration Fields
+
+| Field                       | Required | Description                                                       |
+| --------------------------- | -------- | ----------------------------------------------------------------- |
+| Client ID                   | Yes      | The Services ID from Apple Developer Portal                       |
+| Scopes                      | No       | OIDC scopes to request (default: `email`)                         |
+| Additional Query Parameters | No       | Extra key-value pairs to include in the authorization request URL |
+
+## How It Works
+
+The OIDC variant uses Apple's discovery document at:
+
+```
+https://appleid.apple.com/.well-known/openid-configuration
+```
+
+This automatically provides the authorization endpoint, token endpoint, and JWKS URI for token verification — no manual endpoint configuration needed.
+
+## Recommended Scopes
+
+- `email` — Access to the user's email address
+- `name` — Access to the user's name (only provided on the **first** sign-in)
+- `openid` — Required for OIDC flows (included automatically)
+
+## Extra Query Parameters
+
+Common parameters supported by Apple's OIDC endpoint:
+
+| Parameter       | Description                                              |
+| --------------- | -------------------------------------------------------- |
+| `response_mode` | Set to `form_post` for a server-side POST callback       |
+
+## Important Notes
+
+- The user's name is **only provided on the first authorization**. Store it immediately.
+- Users may choose to **hide their real email**. Apple provides a relay email address instead.
+- Unlike the OAuth variant, no client secret JWT needs to be generated or rotated.
+
+## Useful Links
+
+- [Apple Developer Portal](https://developer.apple.com/account)
+- [Sign In with Apple Documentation](https://developer.apple.com/sign-in-with-apple/)
+- [Apple's OIDC Discovery Document](https://appleid.apple.com/.well-known/openid-configuration)

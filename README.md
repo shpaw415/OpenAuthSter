@@ -10,7 +10,7 @@ OpenAuthster provides developers with a ready-to-deploy authentication solution 
 - 🏢 **Multi-Tenant Support** - Manage multiple projects/applications from a single deployment
 - 🎨 **Web UI Dashboard** - Configure themes, providers, and project settings
 - ☁️ **Cloudflare Workers** - Edge-deployed for low latency worldwide
-- 📦 **Full-Stack SDKs** - React hooks, TypeScript client, and shared types
+- 📦 **SDKs** — TypeScript (`openauthster-shared`), Swift (`sdk/ios`), Kotlin (`sdk/android`)
 
 ## Architecture
 
@@ -51,29 +51,17 @@ OpenAuthster follows a modular architecture:
 
 ## Repository Structure
 
-OpenAuthster is a **multi-repo project** consisting of the following repositories:
+This repository is a **Bun monorepo**. See `MONOREPO.md`.
 
-> **Note:** GitHub repository names may differ from local workspace folder names. The table below shows the published GitHub repository names.
+| Path | Package | Description |
+| --- | --- | --- |
+| `apps/issuer` | `openauthster-issuer-server` | Cloudflare Worker issuer |
+| `apps/webui` | `openauth-webui` | Cloudflare Pages admin UI |
+| `packages/shared` | `openauthster-shared` | Types, D1 schema, TS client |
+| `sdk/ios` | Swift Package | Public PKCE client |
+| `sdk/android` | Kotlin library | Public PKCE client |
 
-### Core Repositories
-
-| Repository                                                                 | Workspace Folder              | Description                                                                                          |
-| -------------------------------------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------- |
-| **[OpenAuthSter-issuer](https://github.com/shpaw415/OpenAuthSter-issuer)** | `openauth-multitenant-server` | Cloudflare Worker containing the OpenAuth issuer server with multi-tenant capabilities               |
-| **[OpenAuthSter-webUI](https://github.com/shpaw415/OpenAuthSter-webUI)**   | `openauth-webui`              | Web UI dashboard for managing projects, customizing themes, and configuring authentication providers |
-| **[OpenAuthSter-shared](https://github.com/shpaw415/OpenAuthSter-shared)** | `openauth-webui-shared-types` | Shared TypeScript types, database schemas, and client SDK for connecting to OpenAuthster             |
-
-### Client SDKs
-
-| Repository                                                       | Workspace Folder | Description                                      | Status |
-| ---------------------------------------------------------------- | ---------------- | ------------------------------------------------ | ------ |
-| **[openauth-react](https://github.com/shpaw415/openauth-react)** | `openauth-react` | React integration for client-side authentication | 🚧 WIP |
-
-### Documentation
-
-| Repository                                                           | Workspace Folder   | Description                 |
-| -------------------------------------------------------------------- | ------------------ | --------------------------- |
-| **[openauthster-doc](https://github.com/shpaw415/openauthster-doc)** | `openauthster-doc` | Official documentation site |
+Docs remain at [openauthster-doc](https://github.com/shpaw415/openauthster-doc). React helper remains [openauth-react](https://github.com/shpaw415/openauth-react) until it is imported.
 
 ## Workspace Commands
 

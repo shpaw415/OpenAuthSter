@@ -1,0 +1,47 @@
+# Spotify OAuth Setup
+
+Configure Spotify OAuth to allow users to sign in with their Spotify accounts.
+
+## Setup Steps
+
+1. Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+2. Click **Create App**
+3. Fill in your app details:
+   - **App name**: Your application name
+   - **App description**: Brief description
+   - **Redirect URI**: <props.RedirectURI value={props.redirectURI} />
+4. Accept the terms and click **Save**
+5. Go to **Settings** to get your **Client ID** and **Client Secret**
+
+## Configuration Fields
+
+| Field                       | Required | Description                                          |
+| --------------------------- | -------- | ---------------------------------------------------- |
+| Client ID                   | Yes      | The Client ID from Spotify Developer Dashboard       |
+| Client Secret               | Yes      | The Client Secret from Spotify Developer Dashboard   |
+| Scopes                      | No       | OAuth scopes to request (default: user-read-email)   |
+| PKCE                        | No       | Enable PKCE for enhanced security                    |
+| Additional Query Parameters | No       | Extra parameters to include in the authorization URL |
+
+## PKCE Support
+
+Spotify supports PKCE (Proof Key for Code Exchange). Enable it for enhanced security, especially recommended for public clients.
+
+## Additional Query Parameters
+
+Common parameters you might want to add:
+
+| Parameter     | Description                                              |
+| ------------- | -------------------------------------------------------- |
+| `show_dialog` | Force the user to approve the app again (`true`/`false`) |
+
+## Recommended Scopes
+
+- `user-read-email` - Access to user's email address
+- `user-read-private` - Access to user's subscription details and country
+
+## Useful Links
+
+- [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+- [Spotify Authorization Guide](https://developer.spotify.com/documentation/general/guides/authorization/)
+- [Spotify Scopes Reference](https://developer.spotify.com/documentation/general/guides/authorization/scopes/)

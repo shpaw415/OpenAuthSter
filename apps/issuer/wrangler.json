@@ -1,0 +1,28 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"compatibility_date": "2026-01-27",
+	"main": "src/index.ts",
+	"name": "openauthster-issuer",
+	"upload_source_maps": true,
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "QR_AUTH_DO",
+				"class_name": "QRHandshake"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["QRHandshake"]
+		}
+	],
+	"d1_databases": [],
+	"observability": {
+		"enabled": true
+	},
+	"compatibility_flags": ["nodejs_compat"],
+	"vars": {},
+	"workers_dev": true
+}

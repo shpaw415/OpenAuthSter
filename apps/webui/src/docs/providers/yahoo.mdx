@@ -1,0 +1,40 @@
+# Yahoo OAuth Setup
+
+Configure Yahoo OAuth to allow users to sign in with their Yahoo accounts.
+
+## Setup Steps
+
+1. Go to the [Yahoo Developer Network](https://developer.yahoo.com/apps/)
+2. Click **Create an App**
+3. Fill in your application details:
+   - **Application Name**: Your app's name
+   - **Application Type**: Web Application
+   - **Redirect URI(s)**: <props.RedirectURI value={props.redirectURI} />
+4. Select the API permissions you need
+5. Click **Create App**
+6. Copy your **Client ID (App ID)** and **Client Secret (App Secret)**
+
+## Configuration Fields
+
+| Field                       | Required | Description                                               |
+| --------------------------- | -------- | --------------------------------------------------------- |
+| Client ID                   | Yes      | The App ID from Yahoo Developer Network                   |
+| Client Secret               | Yes      | The App Secret from Yahoo Developer Network               |
+| Scopes                      | No       | OAuth scopes to request (default: openid, email, profile) |
+| PKCE                        | No       | Enable PKCE for enhanced security                         |
+| Additional Query Parameters | No       | Extra parameters to include in the authorization URL      |
+
+## PKCE Support
+
+Yahoo supports PKCE (Proof Key for Code Exchange). Enable it for enhanced security in your OAuth flow.
+
+## Recommended Scopes
+
+- `openid` - Required for OpenID Connect
+- `email` - Access to user's email address
+- `profile` - Access to user's basic profile information
+
+## Useful Links
+
+- [Yahoo Developer Network](https://developer.yahoo.com/apps/)
+- [Yahoo OAuth Documentation](https://developer.yahoo.com/oauth2/guide/)

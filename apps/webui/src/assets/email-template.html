@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="{{htmlToLang}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{appName}}</title>
+  <style>
+    .email-body {
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f7;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .email-wrapper {
+      background-color: #f4f4f7;
+      padding: 40px 20px;
+    }
+
+    .email-container {
+      max-width: 560px;
+    }
+
+    .brand-row {
+      padding-bottom: 24px;
+    }
+
+    .brand-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: #4f46e5;
+      letter-spacing: -0.5px;
+    }
+
+    .card-shell {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .accent-bar {
+      height: 4px;
+      background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    }
+
+    .card-content {
+      padding: 40px 40px 32px;
+    }
+
+    .verification-label {
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #4f46e5;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .card-title {
+      margin: 0 0 20px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.3;
+    }
+
+    .card-description {
+      margin: 0 0 28px;
+      font-size: 15px;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .card-description-strong {
+      color: #111827;
+    }
+
+    .code-table {
+      margin-bottom: 28px;
+    }
+
+    .code-box {
+      background: #f5f3ff;
+      border: 2px dashed #c4b5fd;
+      border-radius: 10px;
+      padding: 24px 16px;
+    }
+
+    .code-value {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: 12px;
+      color: #4f46e5;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .card-note {
+      margin: 0;
+      font-size: 13px;
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+
+    .card-divider {
+      height: 1px;
+      background: #f3f4f6;
+      margin: 0 40px;
+    }
+
+    .security-row {
+      padding: 20px 40px;
+    }
+
+    .security-note {
+      margin: 0;
+      font-size: 12px;
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+
+    .security-note-strong {
+      color: #6b7280;
+    }
+
+    .footer-row {
+      padding-top: 28px;
+    }
+
+    .footer-copy {
+      margin: 0 0 6px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .footer-meta {
+      margin: 0;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body class="email-body">
+  <table width="100%" cellpadding="0" cellspacing="0" class="email-wrapper">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" class="email-container">
+
+          <!-- Brand -->
+          <tr>
+            <td align="center" class="brand-row">
+              <span class="brand-name">{{appName}}</span>
+            </td>
+          </tr>
+
+          <!-- Card -->
+          <tr>
+            <td class="card-shell">
+
+              <!-- Accent bar -->
+              <div class="accent-bar"></div>
+
+              <!-- Body -->
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td class="card-content">
+                    <p class="verification-label">Verification Code</p>
+                    <h1 class="card-title">Confirm your identity</h1>
+                    <p class="card-description">
+                      Hi <strong class="card-description-strong">{{to}}</strong>, use the code below to complete your sign-in.
+                      It expires in <strong class="card-description-strong">10 minutes</strong>.
+                    </p>
+
+                    <!-- Code box -->
+                    <table width="100%" cellpadding="0" cellspacing="0" class="code-table">
+                      <tr>
+                        <td align="center" class="code-box">
+                          <span class="code-value">{{code}}</span>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p class="card-note">
+                      If you didn't request this, you can safely ignore this email. Someone may have entered your address by mistake.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Divider -->
+              <div class="card-divider"></div>
+
+              <!-- Security note -->
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td class="security-row">
+                    <p class="security-note">
+                      🔒 <strong class="security-note-strong">Security tip:</strong> {{appName}} will never ask you to share this code with anyone.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" class="footer-row">
+              <p class="footer-copy">&copy; 2026 {{appName}} &middot; All rights reserved</p>
+              <p class="footer-meta">You received this because a sign-in was attempted with your account.</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

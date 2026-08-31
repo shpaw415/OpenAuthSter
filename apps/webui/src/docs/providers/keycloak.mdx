@@ -1,0 +1,30 @@
+# Keycloak Setup
+
+Configure Keycloak as an identity provider for your application.
+
+## Setup Steps
+
+1. Access your [Keycloak Admin Console](https://www.keycloak.org/getting-started) (self-hosted)
+2. Select or create a **Realm**
+3. Navigate to **Clients** and click **Create**
+4. Configure the client:
+   - **Client ID**: Your unique client identifier
+   - **Client Protocol**: openid-connect
+   - **Access Type**: confidential
+5. Set **Valid Redirect URIs** to <props.RedirectURI value={props.redirectURI} />
+6. Go to the **Credentials** tab to get the client secret
+
+## Configuration Fields
+
+| Field         | Required | Description                                                    |
+| ------------- | -------- | -------------------------------------------------------------- |
+| Client ID     | Yes      | The client ID configured in Keycloak                           |
+| Client Secret | Yes      | The client secret from Credentials tab                         |
+| Realm         | Yes      | The Keycloak realm name                                        |
+| Base URL      | Yes      | The Keycloak server URL (e.g., `https://keycloak.example.com`) |
+| Scopes        | No       | Additional OAuth scopes to request (default: email)            |
+
+## Useful Links
+
+- [Keycloak Documentation](https://www.keycloak.org/documentation)
+- [Keycloak Admin Guide](https://www.keycloak.org/docs/latest/server_admin/)

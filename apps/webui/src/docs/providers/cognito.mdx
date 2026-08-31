@@ -1,0 +1,64 @@
+# AWS Cognito Setup
+
+Configure AWS Cognito as an identity provider for your application.
+
+## Setup Steps
+
+1. Sign in to the [AWS Console](https://console.aws.amazon.com)
+2. Navigate to **Amazon Cognito** service
+3. Create or select a **User Pool**
+4. Go to **App integration** tab and create an **App client**
+5. Configure the app client:
+   - Enable **Cognito user pool** as identity provider
+   - Set your **Callback URL** (redirect URI) to <props.RedirectURI value={props.redirectURI} />
+   - Select the OAuth scopes you need
+6. Copy the **Client ID** and **Client Secret**
+7. Note your **User Pool Domain** (under "Domain" section)
+
+## Configuration Fields
+
+| Field                       | Required | Description                                                 |
+| --------------------------- | -------- | ----------------------------------------------------------- |
+| Client ID                   | Yes      | The app client ID from Cognito                              |
+| Client Secret               | Yes      | The app client secret from Cognito                          |
+| Region                      | Yes      | AWS region where your User Pool is hosted (e.g., us-east-1) |
+| Domain                      | Yes      | Your Cognito domain prefix (without the full URL)           |
+| Scopes                      | No       | OAuth scopes to request (default: email)            |
+| PKCE                        | No       | Enable PKCE for enhanced security                           |
+| Additional Query Parameters | No       | Extra parameters to include in the authorization URL        |
+
+## Domain Configuration
+
+The domain should be just the prefix, not the full URL:
+
+- If your full domain is `myapp.auth.us-east-1.amazoncognito.com`
+- Enter only: `myapp`
+
+For custom domains, enter the full custom domain without the protocol.
+
+## Recommended Scopes
+
+- `openid` - Required for OpenID Connect
+- `email` - Access to user's email address
+- `profile` - Access to user's profile information
+- `aws.cognito.signin.user.admin` - For user pool operations
+
+## PKCE Support
+
+PKCE (Proof Key for Code Exchange) is recommended for enhanced security. Enable it when your app client supports it.
+
+## Additional Query Parameters
+
+Common parameters you might want to add:
+
+| Parameter           | Description                              |
+| ------------------- | ---------------------------------------- |
+| `identity_provider` | Skip hosted UI and go directly to an IdP |
+| `idp_identifier`    | Alternative way to specify the IdP       |
+| `lang`              | Set the language for the hosted UI       |
+
+## Useful Links
+
+- [AWS Console](https://console.aws.amazon.com)
+- [Cognito User Pools Documentation](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools.html)
+- [Cognito OAuth Endpoints](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-userpools-server-contract-reference.html)

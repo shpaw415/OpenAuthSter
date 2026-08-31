@@ -1,1 +1,13 @@
 node_modules
+.wrangler
+.frame-master
+dist
+build
+.DS_Store
+*.iml
+.idea
+.gradle
+local.properties
+*.log
+.env
+.dev.vars

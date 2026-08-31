@@ -1,0 +1,51 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "openauthster-webui",
+	"pages_build_output_dir": ".frame-master/build",
+	"compatibility_date": "2025-11-09",
+	"d1_databases": [
+		{
+			"binding": "PROJECT_DB",
+			"database_name": "<YOUR_D1_DATABASE_NAME>",
+			"database_id": "<YOUR_D1_DATABASE_ID>"
+		}
+	],
+	"vars": {
+		// Redirect URI for your OpenAuthster-webui instance
+		// e.g. https://webui.yourdomain.com/
+		"PUBLIC_REDIRECT_URI": "<YOUR_WEBUI_URL>/",
+		// Issuer URL for your OpenAuthster-issuer instance
+		// e.g. https://auth.yourdomain.com
+		"PUBLIC_ISSUER": "<YOUR_ISSUER_URL>",
+		// Cloudflare API Token with permissions to manage Workers
+		"CLOUDFLARE_API_TOKEN": "<YOUR_CLOUDFLARE_API_TOKEN>",
+		// Cloudflare Account ID where your Cloudflare Worker OpenAuthster-issuer instance is deployed
+		"CF_ACCOUNT_ID": "<YOUR_CLOUDFLARE_ACCOUNT_ID>",
+		// Cloudflare Zone ID for the domain used for auth endpoints
+		// it must match the domain set in CLOUDFLARE_AUTH_ENDPOINT_DOMAIN
+		"CLOUDFLARE_AUTH_DOMAIN_ZONE_ID": "<YOUR_CLOUDFLARE_AUTH_DOMAIN_ZONE_ID>",
+		// Add your Cloudflare Worker Service name here
+		// it's the name given to your Cloudflare Worker that is serving your OpenAuthster-issuer instance
+		"CLOUDFLARE_WORKER_SERVICE_NAME": "<YOUR_WORKER_SERVICE_NAME>",
+		/*
+    	Add your custom auth endpoint domain here e.g. https://auth.yourdomain.com.
+    	it will be used to create auth endpoints for your projects as a suffix.
+    	you must be the owner of the domain and have it added to your Cloudflare account.
+    	e.g. https://auth.yourdomain.com
+    	Note: must start with https:// or http:// and must not end with a slash (/)
+    	*/
+		"CLOUDFLARE_AUTH_ENDPOINT_DOMAIN": "<YOUR_AUTH_ENDPOINT_DOMAIN>",
+		/**
+		 * A random string used as a secret for your webui instance, you can generate it using any random string generator (min 7 characters).
+		 * It is used to set/update projects and groups.
+		 */
+		"WEBUI_SECRET": "<YOUR_RANDOM_STRING_FOR_WEBUI_SECRET>",
+
+		// Do not changes the followings
+		"BUN_VERSION": "1.3.10",
+		"SKIP_DEPENDENCY_INSTALL": "true",
+		"PUBLIC_CLIENT_ID": "openauth_webui",
+		"SELF_HOSTED": "true"
+	},
+	"compatibility_flags": ["nodejs_compat"]
+}

@@ -1,0 +1,50 @@
+# Facebook OAuth Setup
+
+Configure Facebook Login to allow users to sign in with their Facebook accounts.
+
+## Setup Steps
+
+1. Go to the [Meta for Developers Portal](https://developers.facebook.com/apps)
+2. Click **Create App** and select your app type
+3. Enter your app details and click **Create App**
+4. Navigate to **Facebook Login** > **Settings**
+5. Add <props.RedirectURI value={props.redirectURI} /> to **Valid OAuth Redirect URIs**
+6. Go to **Settings** > **Basic** to get your **App ID** and **App Secret**
+
+## Configuration Fields
+
+| Field                       | Required | Description                                              |
+| --------------------------- | -------- | -------------------------------------------------------- |
+| Client ID                   | Yes      | The App ID from Facebook Developer Portal                |
+| Client Secret               | Yes      | The App Secret from Facebook Developer Portal            |
+| Scopes                      | No       | OAuth scopes to request (default: email)                 |
+| PKCE                        | No       | Enable PKCE for enhanced security                        |
+| Additional Query Parameters | No       | Extra parameters to include in the authorization URL     |
+
+## PKCE Support
+
+Facebook supports PKCE (Proof Key for Code Exchange). Enable it for enhanced security in your OAuth flow.
+
+## Additional Query Parameters
+
+Common parameters you might want to add:
+
+| Parameter   | Description                                           |
+| ----------- | ----------------------------------------------------- |
+| `auth_type` | Set to `rerequest` to re-ask for declined permissions |
+| `display`   | Display mode (`page`, `popup`, `touch`)               |
+
+## Recommended Scopes
+
+- `email` - Access to user's email address
+- `public_profile` - Access to user's public profile information
+
+## App Review
+
+For production use with users outside your app's roles, you may need to submit your app for Facebook's App Review process.
+
+## Useful Links
+
+- [Meta for Developers Portal](https://developers.facebook.com/apps)
+- [Facebook Login Documentation](https://developers.facebook.com/docs/facebook-login/)
+- [Facebook Permissions Reference](https://developers.facebook.com/docs/permissions/reference)

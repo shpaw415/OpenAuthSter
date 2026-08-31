@@ -1,0 +1,44 @@
+# QR Code Authentication
+
+Configure authentication using QR codes for a seamless, passwordless login experience across devices.
+
+## Overview
+
+QR Code Authentication allows users to log into a new device (like a desktop computer or smart TV) by scanning a QR code with a device where they are already authenticated (like their smartphone). This provides a frictionless login experience without the need to type passwords on cumbersome keyboards.
+
+## How It Works
+
+1. **Initiation**: The user requests to log in via QR code on the target device.
+2. **Generation**: The system generates a unique, time-limited QR code containing a session identifier and displays it on the target device.
+3. **Scanning**: The user scans the QR code using their mobile device's camera or a dedicated app. **(Note: The device scanning the QR code must already be logged into an active session)**.
+4. **Verification**: The mobile device sends a request to the server to authorize the session linked to the QR code.
+5. **Completion**: The server verifies the request and grants access to the target device, completing the login process.
+
+## Configuration Options
+
+- **Require MFA**: If enabled, users must have Multi-Factor Authentication (MFA) set up. When they scan the QR code, they will also be prompted to enter their MFA token on their mobile device for added security before the target device is authorized.
+
+## Security Considerations
+
+- **Session Hijacking**: Ensure that the communication between the devices and the server is encrypted (HTTPS) to prevent interception of the session identifier.
+- **Physical Security**: Users should only scan QR codes from trusted screens to avoid phishing attacks (e.g., scanning a malicious QR code that authorizes an attacker's session).
+- **Provide a secure environment**: Ensure that the user agree with the procedure before accepting.
+
+```typescript
+// How to secure the QR code authentication flow
+const client = new OpenAuthClient({
+  authFlowCallbacks: {
+    async onQRAuthFlowStart() {
+      prompt(
+        "Are you sure you want to start a QR auth flow? This will give access to a device to log in as you without any further confirmation. (y/n)",
+        "y",
+      ) == "y";
+    },
+  },
+});
+```
+
+## Troubleshooting
+
+- **QR Code Expired**: If the user takes too long to scan the code, they will need to refresh the page to generate a new one.
+- **Device Not Logged In**: The scanning device must have an active, valid session. If the user is logged out on their mobile device, they will be prompted to log in there first before they can authorize the new device.

@@ -1,0 +1,72 @@
+{
+	"name": "openauthster-issuer-server",
+	"description": "Deploy an OpenAuthSter issuer server on Cloudflare Workers.",
+	"module": "true",
+	"version": "1.0.2",
+	"cloudflare": {
+		"label": "OpenAuthSter Issuer Server",
+		"products": [
+			"Workers",
+			"D1"
+		],
+		"categories": [],
+		"preview_icon_url": "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/5764e3ad-0e07-4873-1139-39ba4e6ab200/public",
+		"preview_image_url": "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/40ce8067-10e9-4bc8-d296-fe18b3c05d00/preview",
+		"publish": true
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.10",
+		"@cloudflare/workers-types": "^4.20260409.1",
+		"@types/bun": "latest",
+		"@types/mustache": "^4.2.6",
+		"@types/node": "^25.5.2",
+		"@types/react": "^19.2.14",
+		"@types/semver-compare": "^1.0.3",
+		"commander": "^14.0.3",
+		"drizzle-kit": "^0.31.10",
+		"typescript": "5.9.3",
+		"wrangler": "^4.81.0"
+	},
+	"dependencies": {
+		"@cf-wasm/quickjs": "^0.2.4",
+		"@css-inline/css-inline-wasm": "^0.20.2",
+		"@kagii/openauth": "^0.7.0",
+		"@simplewebauthn/server": "^13.3.0",
+		"@types/semver": "^7.7.1",
+		"bcryptjs": "^3.0.3",
+		"dotenv": "^17.4.1",
+		"drizzle-orm": "0.45.1",
+		"hono": "^4.12.12",
+		"import": "^0.0.6",
+		"jose": "^6.2.2",
+		"mustache": "^4.2.0",
+		"openauthster-shared": "workspace:*",
+		"otpauth": "^9.5.0",
+		"quickjs-emscripten": "^0.32.0",
+		"react": "^19.2.5",
+		"resend": "^6.10.0",
+		"semver": "^7.7.4",
+		"semver-compare": "^1.0.0",
+		"sucrase": "^3.35.1",
+		"valibot": "1.2.0"
+	},
+	"private": true,
+	"scripts": {
+		"check": "tsc && wrangler deploy --dry-run",
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev --port 8788",
+		"db:generate": "bun --bun drizzle-kit generate",
+		"db:migrate": "wrangler d1 migrations apply AUTH_DB --remote",
+		"git:deploy": "git push cloudflare setup",
+		"git:upgrade": "git pull origin main && git merge origin main && bun update openauthster-shared",
+		"update:share": "bun update openauthster-shared",
+		"cli": "bun run ./bin/index.ts",
+		"biome": "biome check",
+		"test": "bun test --preload ./tests/wasm-preload.ts"
+	},
+	"exports": {
+		".": "./src/index.ts",
+		"./endpoints": "./src/endpoints/index.ts",
+		"./client": "./src/client/index.ts"
+	}
+}

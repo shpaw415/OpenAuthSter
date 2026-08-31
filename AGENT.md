@@ -12,7 +12,7 @@ The current repository (`openauthster`) is the **workspace root** — it holds w
 
 | Local Folder                  | Package Name                        | GitHub Repo           | Role                                                         |
 | ----------------------------- | ----------------------------------- | --------------------- | ------------------------------------------------------------ |
-| `openauth-webui-shared-types` | `openauthster-shared` v0.3.0        | `OpenAuthSter-shared` | **Shared library** — types, DB schema, client SDK, providers |
+| `openauthster-shared` | `openauthster-shared` v0.3.0        | `OpenAuthSter-shared` | **Shared library** — types, DB schema, client SDK, providers |
 | `openauth-multitenant-server` | `openauthster-issuer-server` v0.3.0 | `OpenAuthSter-issuer` | Cloudflare Worker — auth issuer server                       |
 | `openauth-webui`              | `openauth-webui` v0.3.0             | `OpenAuthSter-webUI`  | Cloudflare Pages — admin dashboard                           |
 | `openauth-webui-tester`       | (private)                           | —                     | Integration test app                                         |
@@ -21,14 +21,14 @@ The current repository (`openauthster`) is the **workspace root** — it holds w
 Both the issuer and WebUI declare the shared library as a git dependency:
 
 ```json
-"openauth-webui-shared-types": "https://github.com/shpaw415/OpenAuthSter-shared.git#v0.3.0"
+"openauthster-shared": "https://github.com/shpaw415/OpenAuthSter-shared.git#v0.3.0"
 ```
 
 **Runtime**: Bun (dev), Cloudflare Workers (prod). Use `bun` for all package management commands.
 
 ---
 
-## Shared Library (`openauth-webui-shared-types`)
+## Shared Library (`openauthster-shared`)
 
 This is the core of the system. All exports use TypeScript source files directly (no build step required for consumers).
 

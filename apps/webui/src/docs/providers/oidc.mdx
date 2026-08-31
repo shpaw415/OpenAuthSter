@@ -1,0 +1,47 @@
+# Custom OIDC Provider Setup
+
+Configure a custom OpenID Connect (OIDC) provider for authentication.
+
+## Setup Steps
+
+1. Obtain the **Issuer URL** from your OIDC provider
+   - This URL should serve the `/.well-known/openid-configuration` endpoint
+2. Register your application with the OIDC provider
+3. Configure the **redirect URI** in your provider's settings as <props.RedirectURI value={props.redirectURI} />
+4. Copy the **Client ID** provided by your OIDC provider
+
+## Configuration Fields
+
+| Field                       | Required | Description                                                       |
+| --------------------------- | -------- | ----------------------------------------------------------------- |
+| Client ID                   | Yes      | The client ID from your OIDC provider                             |
+| Issuer URL                  | Yes      | The issuer URL (e.g., `https://auth.example.com`)                 |
+| Scopes                      | No       | OAuth scopes to request (default: email)                          |
+| Additional Query Parameters | No       | Extra key-value pairs to include in the authorization request URL |
+
+## Additional Query Parameters
+
+Some OIDC providers support or require additional query parameters in the authorization URL. Common examples:
+
+| Parameter    | Description                                         |
+| ------------ | --------------------------------------------------- |
+| `prompt`     | Control login behavior (`login`, `consent`, `none`) |
+| `login_hint` | Pre-fill the email/username field                   |
+| `acr_values` | Request specific authentication context class       |
+| `ui_locales` | Preferred language for the login page               |
+
+Add these as key-value pairs in the configuration to customize your OIDC flow.
+
+## How OIDC Discovery Works
+
+The issuer URL is used to automatically discover:
+
+- Authorization endpoint
+- Token endpoint
+- JWKS endpoint for token verification
+- Supported scopes and claims
+
+## Useful Links
+
+- [OpenID Connect Specification](https://openid.net/connect/)
+- [OIDC Discovery Specification](https://openid.net/specs/openid-connect-discovery-1_0.html)

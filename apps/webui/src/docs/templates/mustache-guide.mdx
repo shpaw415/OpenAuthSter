@@ -1,0 +1,145 @@
+# Mustache Template Guide
+
+Email and SMS templates use **Mustache**, a logic-less templating language. Variables are inserted with double curly braces: `{{variableName}}`.
+
+## Basic Interpolation
+
+```html
+<p>Your verification code is: <strong>{{code}}</strong></p>
+<p>Welcome to {{appName}}!</p>
+```
+
+Values are HTML-escaped by default. Use triple braces `{{{var}}}` to render raw HTML.
+
+---
+
+## Built-in Variables
+
+Always available when a code is sent:
+
+| Variable | Description |
+| -------- | ----------- |
+| `code`   | The one-time verification code |
+| `AcceptLanguage` | The recipient's preferred language (e.g. "fr-CA,fr;q=0.9,en-US;q=0.8,en;q=0.7") |
+| `to` | The recipient's contact (email or phone number) |
+
+---
+
+## Project Data Variables
+
+Populated from your project's **Custom Data** settings:
+
+| Variable       | Description                                       |
+| -------------- | ------------------------------------------------- |
+| `appName`      | Application display name                          |
+| `companyName`  | Company name — also used as the email sender name |
+| `supportEmail` | Support contact address                           |
+| `websiteUrl`   | Your website URL                                  |
+| `logoUrl`      | URL to your logo image                            |
+| `primaryColor` | Brand color (e.g. `#4F46E5`)                      |
+| `emailFrom`    | Override the sender email address                 |
+
+Any **custom key-value pairs** added to project data are also available as template variables.
+
+---
+
+## Sections — Conditionals & Loops
+
+Wrap content in `{{#variable}}...{{/variable}}` to render it only when the value is truthy:
+
+```html
+{{#supportEmail}}
+  <p>Questions? <a href="mailto:{{supportEmail}}">{{supportEmail}}</a></p>
+{{/supportEmail}}
+```
+
+Sections also iterate over arrays — each item's properties become available inside:
+
+```html
+{{#items}}
+  <li>{{name}}</li>
+{{/items}}
+```
+
+---
+
+## Inverted Sections — Fallbacks
+
+Use `{{^variable}}...{{/variable}}` to render content when a value is **falsy or absent**:
+
+```html
+{{^companyName}}
+  <p>Your verification code</p>
+{{/companyName}}
+{{#companyName}}
+  <p>{{companyName}} verification code</p>
+{{/companyName}}
+```
+
+---
+
+## Custom Function Values
+
+For advanced dynamic values, store a **JavaScript function body** in any project data field by prefixing it with `function::`.
+
+### Format
+
+```
+function::return props.companyName ? props.companyName.toUpperCase() : "ACME";
+```
+
+The function receives a `props` argument containing all other template variables, letting you compute derived values at send time.
+
+### Example
+
+Set project data:
+
+| Key        | Value                                                                    |
+| ---------- | ------------------------------------------------------------------------ |
+| `greeting` | `function::return "Hello from " + (props.companyName || "us") + "!";` |
+
+Use in template:
+
+```html
+<p>{{greeting}}</p>
+<!-- Renders: Hello from Acme! -->
+```
+
+### Use Cases
+
+- **Dynamic subjects**: derive a value from multiple fields
+- **Formatted values**: uppercase, truncate, or format a variable
+- **Conditional text**: return different strings based on other fields
+
+> **Note:** Functions run server-side. Only project administrators can set project data values.
+
+---
+
+## Full Example
+
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  {{#logoUrl}}
+  <img src="{{logoUrl}}" alt="{{appName}}" style="height:40px" />
+  {{/logoUrl}}
+
+  <h2>Your verification code</h2>
+
+  <div style="font-size:32px; letter-spacing:8px; font-weight:bold;">
+    {{code}}
+  </div>
+
+  <p>This code expires in 10 minutes.</p>
+
+  {{#supportEmail}}
+  <p>Need help? <a href="mailto:{{supportEmail}}">Contact support</a></p>
+  {{/supportEmail}}
+
+  <footer>
+    &copy; 2026 {{companyName}}
+  </footer>
+</body>
+</html>
+```
