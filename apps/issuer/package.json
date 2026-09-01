@@ -63,7 +63,7 @@
 		"cli": "bun run ./bin/index.ts",
 		"biome": "biome check",
 		"test": "bun test --preload ./tests/wasm-preload.ts",
-		"build": "bun run --cwd ../../packages/shared build:ui"
+		"build": "cd ../../packages/shared && bun run build:ui"
 	},
 	"exports": {
 		".": "./src/index.ts",
