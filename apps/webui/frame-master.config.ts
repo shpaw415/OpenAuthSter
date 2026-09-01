@@ -13,6 +13,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
+import AssetsToBuild from "frame-master-plugin-assets-to-build";
 
 export default {
 	HTTPServer: {
@@ -97,5 +98,11 @@ export default {
 			prefix: "OBJECT_",
 			src: "src",
 		}),
+		AssetsToBuild({
+			paths: [{
+				"src": "src/404.html",
+				"dist": "404.html"
+			}]
+		})
 	],
 } satisfies FrameMasterConfig;
