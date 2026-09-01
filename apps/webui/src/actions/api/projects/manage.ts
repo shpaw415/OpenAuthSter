@@ -193,7 +193,7 @@ export async function PUT(
 		if (params.data.registerOnInvite !== undefined) {
 			updates.registerOnInvite = params.data.registerOnInvite ? 1 : 0;
 		}
-		if(params.data.secret !== undefined) {
+		if (params.data.secret !== undefined) {
 			updates.secret = generateSecret();
 		}
 
@@ -228,11 +228,9 @@ export async function PUT(
 			};
 
 		try {
-			ctx.data.client.updateOptions({ secret: existing.secret });
 			await ClearIssuerProjectCache({
 				project: existing,
 				env,
-				client: ctx.data.client,
 			}).then(({ success, error }) => {
 				if (!success) {
 					return insertLog({
@@ -256,10 +254,6 @@ export async function PUT(
 				database: env.PROJECT_DB,
 				endpoint: "/api/projects/manage",
 			});
-			return {
-				success: false,
-				error: "Failed to clear issuer cache",
-			};
 		}
 		return {
 			success: true,
@@ -333,12 +327,10 @@ export async function DELETE(params: {
 		};
 
 	// Clean up all orphan records associated with this project
-	ctx.data.client.updateOptions({ secret: existing.secret });
 	await Promise.allSettled([
 		ClearIssuerProjectCache({
 			project: existing,
 			env,
-			client: ctx.data.client,
 		}),
 		db.delete(WebHookTable).where(eq(WebHookTable.clientID, params.clientID)),
 		db.delete(totpTable).where(eq(totpTable.clientID, params.clientID)),
@@ -388,17 +380,41 @@ export async function DELETE(params: {
 	}
 }
 
+async function signProjectSecretHeaders(project: Project) {
+	const timestamp = Math.floor(Date.now() / 1000).toString();
+	const encoder = new TextEncoder();
+	const key = await crypto.subtle.importKey(
+		"raw",
+		encoder.encode(project.secret),
+		{ name: "HMAC", hash: "SHA-256" },
+		false,
+		["sign"],
+	);
+	const signature = await crypto.subtle.sign(
+		"HMAC",
+		key,
+		encoder.encode(`${timestamp}:${project.clientID}`),
+	);
+	return {
+		"X-Client-Timestamp": timestamp,
+		"X-Client-Signature": Array.from(new Uint8Array(signature), (byte) =>
+			byte.toString(16).padStart(2, "0"),
+		).join(""),
+	};
+}
+
 async function ClearIssuerProjectCache({
 	project,
 	env,
-	client,
 }: {
 	project: Project;
-	client: import("@auth").AuthClientType;
 	env: Env;
 }) {
 	const url = new URL(`/clear-cache/${project.clientID}`, env.PUBLIC_ISSUER);
-	const response = await client.fetch(url.toString());
+	url.searchParams.set("client_id", project.clientID);
+	const response = await fetch(url.toString(), {
+		headers: await signProjectSecretHeaders(project),
+	});
 
 	if (response.ok) {
 		const data = (await response.json().catch(() => null)) as {

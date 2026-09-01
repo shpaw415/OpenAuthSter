@@ -4,6 +4,7 @@ import {
 	COOKIE_NAME,
 	type Project,
 } from "openauthster-shared";
+import { isOriginAllowed } from "openauthster-shared/native";
 
 export function createInviteIdCookieContent(
 	inviteId: string,
@@ -96,18 +97,15 @@ export function toAuthorizeOrigin({
 		if (!requestOrigin) {
 			return defaultOrigin;
 		}
-		const authorizedOrigins =
-			[project?.originURL, env.WEBUI_ORIGIN_URL]
-				.join(",")
-				?.split(",")
-				.map((origin) => origin.trim()) || [];
+		const authorizedOrigins = [project?.originURL, env.WEBUI_ORIGIN_URL]
+			.join(",")
+			.split(",")
+			.map((origin) => origin.trim())
+			.filter(Boolean);
 
-		console.log(JSON.stringify({ requestOrigin, authorizedOrigins }));
-
-		const allowOrigin = authorizedOrigins.includes(requestOrigin)
+		return isOriginAllowed(authorizedOrigins, requestOrigin)
 			? requestOrigin
 			: defaultOrigin;
-		return allowOrigin;
 	} catch (error) {
 		console.error(
 			"Error determining authorized origin:",

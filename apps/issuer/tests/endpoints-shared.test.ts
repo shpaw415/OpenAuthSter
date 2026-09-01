@@ -119,4 +119,21 @@ describe("endpoint shared helpers", () => {
 
 		expect(result).toEqual({ error: "invalid_signature" });
 	});
+
+	it("rejects HMAC signed for a different clientID", async () => {
+		const timestamp = Math.floor(Date.now() / 1000).toString();
+		const signature = await createSignature(timestamp);
+
+		const result = await getSecretFromRequest(
+			new Request("http://localhost/clear-cache/client-123", {
+				headers: {
+					"X-Client-Timestamp": timestamp,
+					"X-Client-Signature": signature,
+				},
+			}),
+			{ ...project, clientID: "openauth_webui" },
+		);
+
+		expect(result).toEqual({ error: "invalid_signature" });
+	});
 });

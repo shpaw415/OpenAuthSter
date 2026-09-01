@@ -1,6 +1,5 @@
 // Hono imports
 
-import { env } from "cloudflare:workers";
 import { issuer } from "@kagii/openauth/issuer";
 import type { Provider } from "@kagii/openauth/provider/provider";
 import { D1Storage } from "@kagii/openauth/storage/d1";
@@ -62,6 +61,7 @@ import {
 	type GetUserListFilters,
 	UserListSchemaValidation,
 } from "openauthster-shared/endpoints";
+import { isAllowedRedirectURI } from "openauthster-shared/native";
 import { createSelfClient } from "openauthster-shared/providers/utils";
 import { deleteUserWithAuthState } from "openauthster-shared/user/delete";
 import { getCookiesFromRequest } from "openauthster-shared/utils";
@@ -72,7 +72,7 @@ import globalOpenAutsterConfig, { subjects } from "../../openauth.config";
 import packageJson from "../../package.json" with { type: "json" };
 // Internal imports
 import Issuer from "../";
-import { deleteCache, getAllCache, getCache, setCache } from "../cache";
+import { deleteCache } from "../cache";
 import DefaultTheme from "../defaults/theme";
 import {
 	generateProvidersFromConfig,
@@ -255,15 +255,19 @@ endpoints
 
 /**
  * ClearCache endpoint for clearing the project cache
- * **Will be used in the v0.3.0 of the webUI**
  */
 endpoints.get("/clear-cache/:project_id", async (c) => {
-	const res = await getSecretFromRequest(c.req.raw, c.get("project"));
+	const projectId = c.req.param("project_id");
+	const project = await getProjectById(projectId, c.env);
+	if (!project) {
+		return c.json({ error: "Project not found", success: false }, 404);
+	}
+	const res = await getSecretFromRequest(c.req.raw, project);
 	if (res.error) {
 		return c.json({ error: `Unauthorized: ${res.error}`, success: false }, 401);
 	}
 
-	deleteCache(c.req.param("project_id"));
+	deleteCache(projectId);
 	return c.json({ success: true });
 });
 
@@ -308,7 +312,6 @@ async function requestToParams(request: Request, env: Env): Promise<Params> {
 			.get();
 		if (project) {
 			clientIDParams = project.clientID;
-			setProjectToCache(project);
 		}
 	}
 
@@ -2075,46 +2078,8 @@ endpoints.all("*", async (c) => {
 			reuse: 60,
 		},
 		allow: async (input) => {
-			const incomingUrl = new URL(input.redirectURI);
-
-			// Only allow http and https protocols to prevent protocol-based attacks
-			if (!["http:", "https:"].includes(incomingUrl.protocol)) {
-				return false;
-			}
-
-			// Handle localhost/127.0.0.1 with stricter validation
-			if (
-				incomingUrl.hostname === "localhost" ||
-				incomingUrl.hostname === "127.0.0.1"
-			) {
-				// Only allow http for localhost (https typically not configured locally)
-				if (incomingUrl.protocol !== "http:") return false;
-				return true;
-			}
-
-			if (!project?.originURL) return false;
-
-			const projectUrl = new URL(
-				toAuthorizeOrigin({
-					request: c.req.raw,
-					project,
-					defaultOrigin: env.ISSUER_URL,
-					env,
-				}),
-			);
-
-			// Enforce HTTPS when project URL uses HTTPS (prevent downgrade attacks)
-			if (
-				projectUrl.protocol === "https:" &&
-				incomingUrl.protocol !== "https:"
-			) {
-				return false;
-			}
-
-			// Validate origin match
-			if (incomingUrl.origin === projectUrl.origin) return true;
-
-			return false;
+			if (!project) return false;
+			return isAllowedRedirectURI(project, input.redirectURI);
 		},
 		subjects,
 		providers: project
@@ -2236,14 +2201,6 @@ endpoints.all("*", async (c) => {
 
 // Auth helper functions //////////////////////////////////////////////////////
 
-function setProjectToCache(project: Project) {
-	setCache<Project>(project.clientID, project);
-}
-
-function getProjectFromCache(clientID: string): Project | null {
-	return getCache<Project>(clientID);
-}
-
 async function getProject({
 	id,
 	env,
@@ -2257,14 +2214,7 @@ async function getProject({
 	if (projectInCtx && projectInCtx.clientID === id) {
 		return projectInCtx;
 	}
-	const cachedProject = getProjectFromCache(id);
-	if (cachedProject) {
-		return cachedProject;
-	}
-	const project = await getProjectById(id, env);
-	if (!project) return;
-	setProjectToCache(project);
-	return project;
+	return (await getProjectById(id, env)) ?? undefined;
 }
 
 async function getProjectById(
@@ -2280,42 +2230,23 @@ async function getProjectById(
 
 	if (!clientId) return null;
 
-	const cachedProject = getCache<Project>(clientId);
-	if (cachedProject) {
-		return cachedProject;
-	}
-
 	const project = await drizzle(env.AUTH_DB)
 		.select()
 		.from(projectTable)
 		.where(eq(projectTable.clientID, clientId))
 		.get();
 
-	if (!project) return null;
-
-	setCache<Project>(clientId, project);
-	return project;
+	return project ?? null;
 }
 
 async function getProjectByHost(url: URL, env: Env): Promise<null | Project> {
-	const cachedProjects = getAllCache<Project>();
-	const cachedProject = cachedProjects.find(
-		(project) => project.authEndpointURL === url.hostname,
-	);
-	if (cachedProject) {
-		return cachedProject;
-	}
-
 	const project = await drizzle(env.AUTH_DB)
 		.select()
 		.from(projectTable)
 		.where(eq(projectTable.authEndpointURL, url.hostname))
 		.get();
 
-	if (!project) return null;
-
-	setCache<Project>(project.clientID, project);
-	return project;
+	return project ?? null;
 }
 
 async function getThemeFromProject(project: Project, env: Env): Promise<Theme> {
