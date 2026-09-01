@@ -16,10 +16,7 @@ import type {
 	ProviderConfig,
 	ProviderType,
 } from "openauthster-shared";
-import {
-	getProviderMeta,
-	getProvidersByCategory,
-} from "openauthster-shared";
+import { getProviderMeta, getProvidersByCategory } from "openauthster-shared";
 import type {
 	ExtendedWebHookConfig,
 	WebHookConfig,
@@ -1196,22 +1193,27 @@ function ProjectClientInfo({
 					<div>
 						<div className="flex items-center justify-between gap-3 mb-1">
 							<div className="flex items-center gap-2">
-							<label className="text-gray-400 text-sm" htmlFor="client-secret">
-								Client Secret
-							</label>
-							<button
-								type="button"
-								onClick={() => setShowSecret(!showSecret)}
-								disabled={isRotatingSecret}
-								className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded transition-colors inline-flex items-center justify-center"
-								title={showSecret ? "Hide Client Secret" : "Show Client Secret"}
-							>
-								{showSecret ? (
-									<Icon icon="lucide:eye-off" className="w-4 h-4" />
-								) : (
-									<Icon icon="lucide:eye" className="w-4 h-4" />
-								)}
-							</button>
+								<label
+									className="text-gray-400 text-sm"
+									htmlFor="client-secret"
+								>
+									Client Secret
+								</label>
+								<button
+									type="button"
+									onClick={() => setShowSecret(!showSecret)}
+									disabled={isRotatingSecret}
+									className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded transition-colors inline-flex items-center justify-center"
+									title={
+										showSecret ? "Hide Client Secret" : "Show Client Secret"
+									}
+								>
+									{showSecret ? (
+										<Icon icon="lucide:eye-off" className="w-4 h-4" />
+									) : (
+										<Icon icon="lucide:eye" className="w-4 h-4" />
+									)}
+								</button>
 							</div>
 							<button
 								type="button"
@@ -1739,12 +1741,13 @@ function AllowOriginForm({
 					type="text"
 					value={value}
 					onChange={(e) => setValue(e.target.value)}
-					placeholder="https://example.com,https://app.example.com"
+					placeholder="https://example.com,gpio-companion-desktop://auth/callback"
 					className="w-full px-3 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 					disabled={isSaving}
 				/>
 				<p className="mt-1 text-xs text-gray-400">
-					Separate multiple origins with a comma.
+					HTTPS origins and native app URIs (e.g.
+					gpio-companion-desktop://auth/callback). Separate with commas.
 				</p>
 				<button
 					type="submit"

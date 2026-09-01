@@ -20,6 +20,15 @@ export function getProjectRedirectURIs(project: Project): string[] {
 	return [...new Set([...getProjectOriginURLs(project), ...extra])];
 }
 
+const BLOCKED_SCHEMES = new Set([
+	"javascript:",
+	"data:",
+	"file:",
+	"vbscript:",
+	"blob:",
+	"about:",
+]);
+
 export function coerceUrl(value: string): URL | null {
 	const trimmed = value.trim();
 	if (!trimmed) return null;
@@ -32,6 +41,31 @@ export function coerceUrl(value: string): URL | null {
 			return null;
 		}
 	}
+}
+
+function isHttpProtocol(protocol: string): boolean {
+	return protocol === "http:" || protocol === "https:";
+}
+
+function normalizeRedirectHref(url: URL): string {
+	const href = url.href;
+	return href.endsWith("/") ? href.slice(0, -1) : href;
+}
+
+function isNativeRedirectAllowed(
+	allowedEntries: string[],
+	incoming: URL,
+	uri: string,
+): boolean {
+	if (BLOCKED_SCHEMES.has(incoming.protocol.toLowerCase())) return false;
+	const incomingHref = normalizeRedirectHref(incoming);
+	return allowedEntries.some((entry) => {
+		if (entry === uri) return true;
+		const allowed = coerceUrl(entry);
+		if (!allowed || isHttpProtocol(allowed.protocol)) return false;
+		if (BLOCKED_SCHEMES.has(allowed.protocol.toLowerCase())) return false;
+		return normalizeRedirectHref(allowed) === incomingHref;
+	});
 }
 
 export function isOriginAllowed(
@@ -56,14 +90,15 @@ export function isOriginAllowed(
 }
 
 export function isAllowedRedirectURI(project: Project, uri: string): boolean {
+	const incoming = coerceUrl(uri);
+	if (!incoming) return false;
+	if (BLOCKED_SCHEMES.has(incoming.protocol.toLowerCase())) return false;
+
 	const extra =
 		(project.projectData as ProjectData | undefined)?.redirectURIs ?? [];
 	if (extra.includes(uri)) {
 		return true;
 	}
-
-	const incoming = coerceUrl(uri);
-	if (!incoming) return false;
 
 	if (
 		(incoming.hostname === "localhost" || incoming.hostname === "127.0.0.1") &&
@@ -72,8 +107,12 @@ export function isAllowedRedirectURI(project: Project, uri: string): boolean {
 		return true;
 	}
 
-	if (!["http:", "https:"].includes(incoming.protocol)) {
-		return extra.includes(uri);
+	if (!isHttpProtocol(incoming.protocol)) {
+		return isNativeRedirectAllowed(
+			getProjectRedirectURIs(project),
+			incoming,
+			uri,
+		);
 	}
 
 	return isOriginAllowed(getProjectOriginURLs(project), incoming.origin);

@@ -120,4 +120,52 @@ describe("native public clients", () => {
 		expect(isAllowedRedirectURI(p, "https://webcreas.com")).toBe(false);
 		expect(isAllowedRedirectURI(p, "https://evil.example.com")).toBe(false);
 	});
+
+	it("allows native scheme redirect URIs listed in originURL", () => {
+		const p = project({
+			originURL: "gpio-companion-desktop://auth/callback",
+		});
+		expect(
+			isAllowedRedirectURI(p, "gpio-companion-desktop://auth/callback"),
+		).toBe(true);
+		expect(
+			isAllowedRedirectURI(p, "gpio-companion-desktop://auth/callback/"),
+		).toBe(true);
+		expect(isAllowedRedirectURI(p, "gpio-companion://auth/callback")).toBe(
+			false,
+		);
+		expect(
+			isAllowedRedirectURI(p, "gpio-companion-desktop://other/callback"),
+		).toBe(false);
+	});
+
+	it("allows mixed https origins and native URIs in originURL", () => {
+		const p = project({
+			originURL:
+				"https://gpio-companion.com,gpio-companion-desktop://auth/callback",
+		});
+		expect(isAllowedRedirectURI(p, "https://gpio-companion.com/callback")).toBe(
+			true,
+		);
+		expect(
+			isAllowedRedirectURI(p, "gpio-companion-desktop://auth/callback"),
+		).toBe(true);
+		expect(isAllowedRedirectURI(p, "gpio-companion://auth/callback")).toBe(
+			false,
+		);
+	});
+
+	it("rejects unlisted custom schemes and dangerous schemes", () => {
+		const p = project({
+			originURL: "gpio-companion-desktop://auth/callback",
+			projectData: {
+				redirectURIs: ["javascript:alert(1)"],
+			},
+		});
+		expect(isAllowedRedirectURI(p, "gpio-companion://auth/callback")).toBe(
+			false,
+		);
+		expect(isAllowedRedirectURI(p, "javascript:alert(1)")).toBe(false);
+		expect(isAllowedRedirectURI(p, "data:text/html,hi")).toBe(false);
+	});
 });
