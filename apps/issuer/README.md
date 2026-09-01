@@ -120,7 +120,9 @@ Update your `wrangler.json` with the database credentials and environment variab
       "remote": true
     }
   ],
+  "send_email": [{ "name": "EMAIL" }],
   "vars": {
+    "EMAIL_FROM": "noreply@yourdomain.com",
     "WEBUI_ADMIN_EMAILS": "admin@example.com,owner@example.com",
     "WEBUI_ORIGIN_URL": "https://admin.yourdomain.com",
     "ISSUER_URL": "https://auth.yourdomain.com"
@@ -134,6 +136,7 @@ Update your `wrangler.json` with the database credentials and environment variab
 | -------------------- | ------------------------------------------------------------- | -------------------------------------- |
 | `database_name`      | D1 database name from step 4                                  | `openauth-db`                          |
 | `database_id`        | D1 database ID from step 4                                    | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` |
+| `EMAIL_FROM`         | Default sender address (domain must be onboarded)             | `noreply@yourdomain.com`               |
 | `WEBUI_ADMIN_EMAILS` | Comma-separated list of admin emails who can access the WebUI | `admin@example.com,owner@example.com`  |
 | `WEBUI_ORIGIN_URL`   | Your WebUI domain (deployed in next steps)                    | `https://admin.yourdomain.com`         |
 | `ISSUER_URL`         | Your issuer domain (this deployment)                          | `https://auth.yourdomain.com`          |
@@ -152,20 +155,19 @@ wrangler d1 migrations apply AUTH_DB --remote
 
 Edit `openauth.config.ts` to set up your authentication settings:
 
-> register strategy provider: only `custom` and `resend` are supported for now, but keep track some out of the box will come shortly.
+> register strategy email providers: `cloudflare` (Workers `send_email` binding), `cloudflare-rest` (Email Sending REST API), `resend`, and `custom`. Onboard the from-domain with `npx wrangler email sending enable yourdomain.com` before sending.
 
 ```typescript
 // openauth.config.ts
-export default async (env: Env) =>
+export default async (request_ctx: EndpointCtx, project: Project) =>
   createExternalGlobalProjectConfig({
     register: {
-      fallbackEmailFrom: "fallback@example.com",
+      fallbackEmailFrom: request_ctx.env.EMAIL_FROM,
       strategy: {
         email: {
-          provider: "custom", // "custom" | "resend"
-          sendEmailFunction(to, code) {
-            console.log(`Send code ${code} to email ${to}`);
-          },
+          provider: "cloudflare", // "cloudflare" | "cloudflare-rest" | "resend" | "custom"
+          send: request_ctx.env.EMAIL,
+          emailFrom: request_ctx.env.EMAIL_FROM,
         },
       },
     },

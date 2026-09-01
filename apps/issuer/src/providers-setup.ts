@@ -218,15 +218,20 @@ async function sendCodeWithEmail({
 	emailBody: string;
 	type: authCodeType;
 }) {
-	switch (globalConfig.register.strategy.email?.provider) {
+	const emailStrategy = globalConfig.register.strategy.email;
+	const fromEmail = resolveEmailFrom(project, globalConfig);
+	const fromName = project.projectData?.companyName || "Acme";
+	const subject = emailTemplate.subject || "Your verification code";
+	const text = htmlToText(emailBody);
+
+	switch (emailStrategy?.provider) {
 		case "resend": {
-			const apiKey = globalConfig.register.strategy.email.apiKey;
 			const result = await new (await import("resend")).Resend(
-				apiKey,
+				emailStrategy.apiKey,
 			).emails.send({
-				from: `${project.projectData?.companyName || "Acme"} <${project.projectData?.emailFrom ?? globalConfig.register.strategy?.email?.emailFrom ?? globalConfig.register.fallbackEmailFrom}>`,
+				from: `${fromName} <${fromEmail}>`,
 				to: [to],
-				subject: emailTemplate.subject || "Your verification code",
+				subject,
 				html: emailBody,
 			});
 			if (result.error) {
@@ -241,16 +246,46 @@ async function sendCodeWithEmail({
 
 			break;
 		}
+		case "cloudflare": {
+			try {
+				const result = await emailStrategy.send.send({
+					to,
+					from: { email: fromEmail, name: fromName },
+					subject,
+					html: emailBody,
+					text,
+				});
+				console.log("cloudflare email success:", result);
+			} catch (error) {
+				const message =
+					error instanceof Error ? error.message : String(error);
+				console.error(`Failed to send email to ${to}:`, error);
+				throw new Error(`Failed to send email: ${message}`);
+			}
+			break;
+		}
+		case "cloudflare-rest": {
+			const result = await sendCloudflareEmailRest({
+				accountId: emailStrategy.accountId,
+				apiToken: emailStrategy.apiToken,
+				to,
+				from: { address: fromEmail, name: fromName },
+				subject,
+				html: emailBody,
+				text,
+			});
+			console.log("cloudflare-rest email success:", result);
+			break;
+		}
 		case "custom":
-			await globalConfig.register.strategy.email.sendEmailFunction({
+			await emailStrategy.sendEmailFunction({
 				to,
 				code,
 				body: emailBody,
-				subject: emailTemplate.subject || "Your verification code",
+				subject,
 				type,
 			});
 			break;
-		// Add other strategies as needed
 		default:
 			console.log(`Sending code ${code} to ${to} via default method`);
 	}
@@ -319,6 +354,77 @@ export async function parseEmailTemplateProps(
 			return [key, value];
 		}),
 	);
+}
+
+function resolveEmailFrom(
+	project: Project,
+	globalConfig: ExternalGlobalProjectConfig,
+): string {
+	const strategy = globalConfig.register.strategy.email;
+	const strategyFrom =
+		strategy && "emailFrom" in strategy ? strategy.emailFrom : undefined;
+	return (
+		project.projectData?.emailFrom ??
+		strategyFrom ??
+		globalConfig.register.fallbackEmailFrom
+	);
+}
+
+function htmlToText(html: string): string {
+	return html
+		.replace(/<[^>]+>/g, " ")
+		.replace(/\s+/g, " ")
+		.trim();
+}
+
+type CloudflareRestSendParams = {
+	accountId: string;
+	apiToken: string;
+	to: string;
+	from: { address: string; name?: string };
+	subject: string;
+	html: string;
+	text: string;
+};
+
+type CloudflareRestSendResult = {
+	success: boolean;
+	errors?: { code: number; message: string }[];
+	result: {
+		delivered: string[];
+		permanent_bounces: string[];
+		queued: string[];
+	} | null;
+};
+
+export async function sendCloudflareEmailRest({
+	accountId,
+	apiToken,
+	to,
+	from,
+	subject,
+	html,
+	text,
+}: CloudflareRestSendParams) {
+	const res = await fetch(
+		`https://api.cloudflare.com/client/v4/accounts/${accountId}/email/sending/send`,
+		{
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${apiToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ to, from, subject, html, text }),
+		},
+	);
+	const payload = (await res.json()) as CloudflareRestSendResult;
+	if (!res.ok || !payload.success) {
+		const message =
+			payload.errors?.map((error) => error.message).join("; ") ||
+			`HTTP ${res.status}`;
+		throw new Error(`Failed to send email: ${message}`);
+	}
+	return payload.result;
 }
 
 type TwilioSMSParams = {

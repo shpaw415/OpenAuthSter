@@ -1,3 +1,7 @@
+interface Env {
+	EMAIL_FROM: string;
+}
+
 declare module "*.css" {
 	const content: string;
 	export default content;

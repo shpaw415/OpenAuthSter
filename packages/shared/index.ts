@@ -426,10 +426,31 @@ export type ExternalGlobalProjectConfig<CTXProperties = unknown> = {
 	};
 };
 
+export type CloudflareSendEmailBinding = {
+	send(message: {
+		to: string | string[];
+		from: string | { email: string; name?: string };
+		subject: string;
+		html?: string;
+		text?: string;
+	}): Promise<{ messageId: string }>;
+};
+
 export type EGPCEmail =
 	| {
 			provider: "resend";
 			apiKey: string;
+			emailFrom: string;
+	  }
+	| {
+			provider: "cloudflare";
+			send: CloudflareSendEmailBinding;
+			emailFrom: string;
+	  }
+	| {
+			provider: "cloudflare-rest";
+			accountId: string;
+			apiToken: string;
 			emailFrom: string;
 	  }
 	| {

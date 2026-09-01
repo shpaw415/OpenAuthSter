@@ -29,8 +29,8 @@ export default async (request_ctx: EndpointCtx, project: Project) =>
 			},
 			strategy: {
 				email: {
-					provider: "resend",
-					apiKey: request_ctx.env.RESEND_API_KEY,
+					provider: "cloudflare",
+					send: request_ctx.env.EMAIL,
 					emailFrom: request_ctx.env.EMAIL_FROM,
 				},
 			},

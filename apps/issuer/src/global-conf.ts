@@ -61,10 +61,23 @@ export type CustomEGCPCProps = {
 	type: authCodeType;
 };
 
+export type CloudflareSendEmailBinding = Env["EMAIL"];
+
 export type EGPCEmail =
 	| {
 			provider: "resend";
 			apiKey: string;
+			emailFrom: string;
+	  }
+	| {
+			provider: "cloudflare";
+			send: CloudflareSendEmailBinding;
+			emailFrom: string;
+	  }
+	| {
+			provider: "cloudflare-rest";
+			accountId: string;
+			apiToken: string;
 			emailFrom: string;
 	  }
 	| {

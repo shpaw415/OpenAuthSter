@@ -101,7 +101,7 @@ type ExternalGlobalProjectConfig<CTXProperties> = {
     fallbackEmailFrom: string
     onSuccessfulRegistration?: (ctx, value, request) => void
     strategy: {
-      email?: { provider: "resend"; apiKey } | { provider: "custom"; sendEmailFunction }
+      email?: { provider: "cloudflare"; send; emailFrom } | { provider: "cloudflare-rest"; accountId; apiToken; emailFrom } | { provider: "resend"; apiKey } | { provider: "custom"; sendEmailFunction }
       phone?: { provider: "twilio"; ... } | { provider: "custom"; sendSMSFunction }
     }
   }

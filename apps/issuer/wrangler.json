@@ -23,6 +23,11 @@
 		"enabled": true
 	},
 	"compatibility_flags": ["nodejs_compat"],
+	"send_email": [
+		{
+			"name": "EMAIL"
+		}
+	],
 	"vars": {},
 	"workers_dev": true
 }

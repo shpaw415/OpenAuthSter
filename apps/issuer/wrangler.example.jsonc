@@ -31,7 +31,15 @@
 		"enabled": true
 	},
 	"compatibility_flags": ["nodejs_compat"],
+	"send_email": [
+		{
+			"name": "EMAIL"
+		}
+	],
 	"vars": {
+		// Sender address for verification emails. Domain must be onboarded:
+		// npx wrangler email sending enable yourdomain.com
+		"EMAIL_FROM": "noreply@yourdomain.com",
 		// Comma-separated list of admin emails for the WebUI.
 		"WEBUI_ADMIN_EMAILS": "email1@example.com,email2@example.com",
 		// The origin URL of your WebUI, used for CORS and redirects.
