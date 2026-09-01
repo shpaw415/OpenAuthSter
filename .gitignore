@@ -1,6 +1,5 @@
 node_modules
 .wrangler
-.frame-master
 dist
 build
 .DS_Store
