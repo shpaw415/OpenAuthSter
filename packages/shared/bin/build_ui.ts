@@ -1,21 +1,31 @@
-const entrypoints = Array.from([
-	...new Bun.Glob("providers/custom/**/client.ts").scanSync({
-		absolute: true,
-	}),
-	...new Bun.Glob("providers/custom/**/index.ts").scanSync({
-		absolute: true,
-	}),
-]);
+const root = "providers/custom";
+const outdir = "providers/build";
 
-Bun.build({
-	entrypoints,
-	outdir: "providers/build",
+const clients = Array.from(
+	new Bun.Glob("**/client.ts").scanSync({ cwd: root, absolute: true }),
+);
+
+if (clients.length === 0) {
+	console.error("No client.ts entrypoints found under providers/custom");
+	process.exit(1);
+}
+
+const result = await Bun.build({
+	entrypoints: clients,
+	outdir,
 	splitting: false,
 	target: "browser",
 	jsx: {
 		importSource: "hono/jsx",
 	},
-	root: "providers/custom",
+	root,
 });
+
+if (!result.success) {
+	for (const log of result.logs) {
+		console.error(log);
+	}
+	process.exit(1);
+}
 
 console.log("Build terminé !");

@@ -1237,13 +1237,9 @@ const qrBuilder: ConfigType<
 		if (!project.originURL)
 			throw new Error("Project origin URL is required for QR provider");
 
-		const { QrUI, QRProvider } = (await import(
-			//@ts-expect-error
-			"openauthster-shared/providers/custom/out/qr/index.js"
-		)) as {
-			QrUI: typeof import("openauthster-shared/providers/custom/qr/QRUI.tsx").QrUI;
-			QRProvider: typeof import("openauthster-shared/providers/custom/qr/index.ts").QRProvider;
-		};
+		const { QrUI, QRProvider } = await import(
+			"openauthster-shared/providers/custom/qr/index.ts"
+		);
 		const issuer = await import("./endpoints/index").then((m) => m.endpoints);
 		const subject = await import("../openauth.config").then((m) => m.subjects);
 
@@ -1276,10 +1272,9 @@ const passkeyBuilder: ConfigType<
 	Record<string, string>
 > = {
 	provider: async ({ env, copyTemplate, project, ctx }) => {
-		const mod = (await import(
-			//@ts-expect-error
-			"openauthster-shared/providers/custom/out/passkey/index.js"
-		)) as typeof import("../node_modules/openauthster-shared/providers/custom/passkey/index.ts");
+		const mod = await import(
+			"openauthster-shared/providers/custom/passkey/index.ts"
+		);
 
 		const autorizedOrigin = toAuthorizeOrigin({
 			request: ctx.req.raw,

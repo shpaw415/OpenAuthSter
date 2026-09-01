@@ -31,6 +31,19 @@
 		"enabled": true
 	},
 	"compatibility_flags": ["nodejs_compat"],
+	"build": {
+		"command": "bun run build:ui",
+		"cwd": "../../packages/shared",
+		"watch_dir": ["../../packages/shared/providers/custom"]
+	},
+	"rules": [
+		{ "type": "Text", "globs": ["**/*.css"], "fallthrough": true },
+		{
+			"type": "Text",
+			"globs": ["**/providers/build/**/*.js"],
+			"fallthrough": true
+		}
+	],
 	"send_email": [
 		{
 			"name": "EMAIL"
