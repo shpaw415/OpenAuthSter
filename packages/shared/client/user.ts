@@ -950,9 +950,12 @@ export class OpenAuthsterClient<
 		}
 		return this.verifyToken(token).then((res) => {
 			if (res.err) {
-				throw new Error("Failed to verify token from request.", {
-					cause: res.err,
-				});
+				const original =
+					res.err instanceof Error ? res.err : new Error(String(res.err));
+				throw new OpenAuthsterErrors.TokenVerificationError(
+					`Failed to verify token from request: ${original.message}`,
+					original,
+				);
 			}
 			if (token) {
 				this.token = token;

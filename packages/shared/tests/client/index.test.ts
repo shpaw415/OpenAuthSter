@@ -191,6 +191,27 @@ describe("OpenAuthsterClient Token Refresh Flow", () => {
 		expect(token).toBe("cookie-token");
 	});
 
+	it("throws TokenVerificationError with cause when local verify fails", async () => {
+		const { InvalidAccessTokenError } = await import("@kagii/openauth/error");
+		const original = new InvalidAccessTokenError();
+		client.openAuthClient.verify = mock(async () => ({ err: original }));
+
+		try {
+			await client.setTokenFromRequest(
+				new Request("http://localhost/session", {
+					headers: { Authorization: "Bearer live-access-token" },
+				}),
+			);
+			throw new Error("expected setTokenFromRequest to reject");
+		} catch (caught) {
+			expect(caught).toBeInstanceOf(Error);
+			expect((caught as Error).name).toBe("TokenVerificationError");
+			expect((caught as Error).message).toContain("Invalid access token");
+			expect((caught as Error).cause).toBe(original);
+			expect(client.isAuthenticated).toBe(false);
+		}
+	});
+
 	it("should fetch public session data and update client state", async () => {
 		const internalClient = client as unknown as Record<string, unknown>;
 		internalClient["token"] = "live-access-token";

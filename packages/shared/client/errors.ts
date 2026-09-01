@@ -26,7 +26,7 @@ export class TokenVerificationError extends Error {
 		message: string,
 		public originalError?: Error,
 	) {
-		super(message);
+		super(message, originalError ? { cause: originalError } : undefined);
 		this.name = "TokenVerificationError";
 	}
 }
