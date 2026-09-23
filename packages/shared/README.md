@@ -79,7 +79,7 @@ const client = createOpenAuthsterClient({
 
 ### Initialization
 
-Call `init()` once in the browser after creating the client. It checks for OAuth callback parameters, exchanges tokens when needed, restores persisted tokens from `localStorage`, and notifies registered listeners.
+Call `init()` once in the browser after creating the client. On the configured `redirectURI` page it checks for OAuth callback parameters and exchanges tokens when needed. On any other URL a `code` search param is ignored so application-specific codes are not consumed. It then restores persisted tokens from `localStorage` and notifies registered listeners.
 
 ```typescript
 await client.init();
@@ -100,11 +100,11 @@ const authURL = await client.login({ autoNavigate: false });
 await client.logout();
 ```
 
-`login()` stores the PKCE challenge in `localStorage`. When the user returns, `init()` detects the callback automatically. You can also call `callback()` yourself if you want to handle that step manually.
+`login()` stores the PKCE challenge in `localStorage`. When the user returns to `redirectURI` (for example `https://example.com/auth/callback?code=<exchange_code>`), `init()` detects the callback automatically. A `code` query param on any other route is left alone. You can also call `callback()` yourself if you want to handle that step manually.
 
 #### Manual Callback Handling
 
-The `init()` method automatically handles OAuth callbacks, but you can manually trigger the callback exchange if needed:
+The `init()` method automatically handles OAuth callbacks on `redirectURI`, but you can manually trigger the callback exchange if needed. `callback()` no-ops unless the current origin and pathname match `redirectURI`:
 
 ```typescript
 await client.callback();

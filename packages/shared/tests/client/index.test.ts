@@ -13,6 +13,25 @@ function createRefreshSuccess() {
 	};
 }
 
+function setLocation(href: string) {
+	const url = new URL(href);
+	const locationMock = {
+		href: url.href,
+		origin: url.origin,
+		pathname: url.pathname,
+		search: url.search,
+		hash: url.hash,
+		host: url.host,
+		hostname: url.hostname,
+		protocol: url.protocol,
+		port: url.port,
+	};
+	global.window = {
+		location: locationMock,
+	} as unknown as typeof window;
+	global.location = locationMock as unknown as Location;
+}
+
 function createSessionResponse(overrides?: {
 	public?: Record<string, unknown> | null;
 	private?: Record<string, unknown> | null;
@@ -68,12 +87,7 @@ describe("OpenAuthsterClient Token Refresh Flow", () => {
 		};
 		global.localStorage = localStorageMock;
 
-		global.window = {
-			location: {
-				search: "",
-				origin: "http://localhost",
-			},
-		} as unknown as typeof window;
+		setLocation("http://localhost/");
 
 		client = new OpenAuthsterClient({
 			issuerURI: "http://issuer.com",
@@ -516,5 +530,136 @@ describe("OpenAuthsterClient Token Refresh Flow", () => {
 			global.setTimeout = originalSetTimeout;
 			callbackClient.logout();
 		}
+	});
+});
+
+describe("OpenAuthsterClient callback URL gating", () => {
+	let client: OpenAuthsterClient<
+		Record<string, unknown>,
+		Record<string, unknown>,
+		"admin" | "user",
+		{ provider: ProviderType; role: "admin" | "user" },
+		Record<string, unknown>
+	>;
+	let mockLocalStorage: Record<string, string> = {};
+
+	beforeEach(() => {
+		mockLocalStorage = {};
+		const localStorageMock: Storage = {
+			getItem: (key: string) => mockLocalStorage[key] || null,
+			setItem: (key: string, value: string) => {
+				mockLocalStorage[key] = value;
+			},
+			removeItem: (key: string) => {
+				delete mockLocalStorage[key];
+			},
+			clear: () => {
+				mockLocalStorage = {};
+			},
+			length: 0,
+			key: () => null,
+		};
+		global.localStorage = localStorageMock;
+		setLocation("http://localhost/");
+		client = new OpenAuthsterClient({
+			issuerURI: "http://issuer.com",
+			clientID: "test-client",
+			redirectURI: "http://localhost/callback",
+		});
+	});
+
+	afterEach(() => {
+		client.logout();
+	});
+
+	it("does not exchange a foreign code on a non-callback URL during init", async () => {
+		setLocation("http://localhost/orders?code=app-authorization-code");
+		mockLocalStorage["oa_challenge"] = JSON.stringify({
+			verifier: "pkce-verifier",
+			state: "pkce-state",
+		});
+		mockLocalStorage["oa_token"] = "existing-token";
+		mockLocalStorage["oa_refresh_token"] = "existing-refresh";
+
+		let exchangeCalled = false;
+		client.openAuthClient.exchange = mock(async () => {
+			exchangeCalled = true;
+			return createRefreshSuccess();
+		});
+
+		await client.init();
+
+		expect(exchangeCalled).toBe(false);
+		expect(client.getToken()).toBe("existing-token");
+		expect(window.location.search).toBe("?code=app-authorization-code");
+	});
+
+	it("exchanges the OAuth code when init runs on the callback URL", async () => {
+		setLocation("http://localhost/callback?code=oauth-exchange-code");
+		mockLocalStorage["oa_challenge"] = JSON.stringify({
+			verifier: "pkce-verifier",
+			state: "pkce-state",
+		});
+
+		client.openAuthClient.exchange = mock(
+			async (code: string, redirectURI: string, verifier: string) => {
+				expect(code).toBe("oauth-exchange-code");
+				expect(redirectURI).toBe("http://localhost/callback");
+				expect(verifier).toBe("pkce-verifier");
+				return createRefreshSuccess();
+			},
+		);
+
+		await client.init();
+
+		expect(client.getToken()).toBe("new-access-token");
+		expect(client.isAuthenticated).toBe(true);
+		expect(mockLocalStorage["oa_challenge"]).toBeUndefined();
+	});
+
+	it("treats a trailing slash on the callback path as the same URL", async () => {
+		setLocation("http://localhost/callback/?code=oauth-exchange-code");
+		mockLocalStorage["oa_challenge"] = JSON.stringify({
+			verifier: "pkce-verifier",
+			state: "pkce-state",
+		});
+
+		client.openAuthClient.exchange = mock(async () => createRefreshSuccess());
+
+		await client.init();
+
+		expect(client.getToken()).toBe("new-access-token");
+		expect(client.isAuthenticated).toBe(true);
+	});
+
+	it("no-ops callback() when the current page is not redirectURI", async () => {
+		setLocation("http://localhost/orders?code=app-authorization-code");
+		mockLocalStorage["oa_challenge"] = JSON.stringify({
+			verifier: "pkce-verifier",
+			state: "pkce-state",
+		});
+
+		let exchangeCalled = false;
+		client.openAuthClient.exchange = mock(async () => {
+			exchangeCalled = true;
+			return createRefreshSuccess();
+		});
+
+		await client.callback();
+
+		expect(exchangeCalled).toBe(false);
+		expect(window.location.search).toBe("?code=app-authorization-code");
+	});
+
+	it("does not treat a non-callback error query as an OAuth error", async () => {
+		setLocation(
+			"http://localhost/orders?error=access_denied&error_description=nope",
+		);
+		mockLocalStorage["oa_token"] = "existing-token";
+
+		await client.init();
+
+		expect(client.error).toBeNull();
+		expect(client.getToken()).toBe("existing-token");
 	});
 });

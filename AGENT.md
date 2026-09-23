@@ -374,7 +374,7 @@ verifySignature({ data, signatureHex, secretKey }): Promise<boolean>
 Client App
   └── createOpenAuthsterClient({ clientID, issuerURI, redirectURI, subject })
         ├── login()    → redirect to issuer /authorize?client_id={clientID}
-        ├── init()     → exchange code, restore tokens from localStorage
+        ├── init()     → exchange code on redirectURI, restore tokens from localStorage
         ├── verify()   → validate JWT subject using defaultSubjectSchema
         ├── getUserSession("public")  → GET /session/public/{clientID}
         └── fetch()    → adds Authorization: Bearer + X-Client-Signature (HMAC)

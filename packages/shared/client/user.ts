@@ -578,6 +578,8 @@ export class OpenAuthsterClient<
 	/**
 	 * Trigger client initialization. Must be called after the first page load, for SSR compatibility.
 	 *
+	 * On the configured `redirectURI` page, `init()` exchanges an OAuth `code` (or records an OAuth `error`). On any other URL, a `code` search param is ignored so application-specific codes are not consumed.
+	 *
 	 * **Browser Only**
 	 * @example
 	 * ```ts
@@ -780,11 +782,13 @@ export class OpenAuthsterClient<
 	/**
 	 * Completes the OAuth authorization flow by exchanging the authorization code in the current URL for access and refresh tokens.
 	 *
-	 * Call this on your redirect/callback page immediately after the user is sent back from the authorization server. Cleans up the `code` and `state` query params from the URL after a successful exchange.
+	 * No-ops unless the current origin and pathname match `redirectURI`. Call this on your redirect/callback page immediately after the user is sent back from the authorization server. Cleans up the `code` and `state` query params from the URL after a successful exchange.
 	 *
 	 * **Browser Only**
 	 */
 	async callback() {
+		if (!this.isCallbackUrl()) return;
+
 		const challenge = this.getChallenge();
 		const code = this.getCode();
 
@@ -1604,10 +1608,11 @@ export class OpenAuthsterClient<
 		const error_description = url.get("error_description");
 		const inviteFlow = url.get("invite_id");
 		const flow = url.get("flow") as FlowTypes | null;
+		const onCallbackUrl = this.isCallbackUrl();
 
-		if (error) {
+		if (onCallbackUrl && error) {
 			this.handleAuthError(error, error_description);
-		} else if (this.getCode()) {
+		} else if (onCallbackUrl && this.getCode()) {
 			await this.callback();
 		} else {
 			await this.restoreSession();
@@ -1808,6 +1813,24 @@ export class OpenAuthsterClient<
 		if (this.copyID === copyID) return;
 		this.copyID = copyID;
 		this.openAuthClient = this.createOpenAuthClient();
+	}
+
+	private isCallbackUrl(): boolean {
+		if (typeof window === "undefined") return false;
+		try {
+			const redirect = new URL(this.redirectURI, window.location.origin);
+			const current = new URL(window.location.href);
+			const normalizePath = (pathname: string) => {
+				if (!pathname || pathname === "/") return "/";
+				return pathname.replace(/\/+$/, "") || "/";
+			};
+			return (
+				current.origin === redirect.origin &&
+				normalizePath(current.pathname) === normalizePath(redirect.pathname)
+			);
+		} catch {
+			return false;
+		}
 	}
 
 	private getCode(): string | null {
