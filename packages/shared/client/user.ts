@@ -22,6 +22,11 @@ import { createClient } from ".";
 import OpenAuthsterErrors, { type ErrorList } from "./errors";
 import { MFAmanager } from "./mfa";
 import { Passkey } from "./passkey";
+import {
+	AUTH_STORAGE_KEYS,
+	browserAuthStorage,
+	type AuthStorage,
+} from "./storage";
 
 export const userEndpointURI = "/session" as const;
 
@@ -429,6 +434,7 @@ export type ClientProps<
 		) => Promise<void>;
 		delete: (key: string) => Promise<void>;
 	};
+	storage?: AuthStorage;
 } & OpenAuthsterOptions;
 
 export type UserMetaData<Roles extends string> = {
@@ -526,6 +532,7 @@ export class OpenAuthsterClient<
 		>
 	>;
 	private onError?: (err: ErrorList) => void;
+	private storage: AuthStorage;
 	private cacheProvider?: ClientProps<
 		PublicSessionData,
 		PrivateSessionData,
@@ -554,6 +561,7 @@ export class OpenAuthsterClient<
 		>,
 	) {
 		this.verifyProps(props);
+		this.storage = props.storage ?? browserAuthStorage();
 		this.issuerURI = props.issuerURI;
 		this.clientID = props.clientID;
 		this.copyID = props.copyID ?? null;
@@ -741,7 +749,7 @@ export class OpenAuthsterClient<
 	/**
 	 * Clears all tokens, session data, and authentication state, then notifies all registered listeners.
 	 *
-	 * Removes `oa_token`, `oa_refresh_token`, `oa_challenge`, and `oa_expires_at` from localStorage. The user must log in again to obtain new tokens.
+	 * Removes `oa_token`, `oa_refresh_token`, `oa_challenge`, and `oa_expires_at` from the auth storage adapter. The user must log in again to obtain new tokens.
 	 *
 	 * **Browser Only**
 	 */
@@ -1449,7 +1457,7 @@ export class OpenAuthsterClient<
 	}
 
 	/**
-	 * Returns the current access token, falling back to the value stored in localStorage. Returns `null` if no token is available.
+	 * Returns the current access token, falling back to the auth storage adapter. Returns `null` if no token is available.
 	 */
 	getToken() {
 		return this.token || this.getStoredToken();
@@ -1839,45 +1847,33 @@ export class OpenAuthsterClient<
 	}
 
 	private setChallenge(challenge: Challenge) {
-		localStorage.setItem("oa_challenge", JSON.stringify(challenge));
+		this.storage.set(AUTH_STORAGE_KEYS.challenge, JSON.stringify(challenge));
 	}
 	private getChallenge(): Challenge | null {
-		const challenge = localStorage.getItem("oa_challenge");
+		const challenge = this.storage.get(AUTH_STORAGE_KEYS.challenge);
 		return challenge ? JSON.parse(challenge) : null;
 	}
 	private removeChallenge() {
-		localStorage.removeItem("oa_challenge");
+		this.storage.remove(AUTH_STORAGE_KEYS.challenge);
 	}
 
 	private getStoredToken(): string | null {
-		return typeof window !== "undefined"
-			? localStorage.getItem("oa_token")
-			: null;
+		return this.storage.get(AUTH_STORAGE_KEYS.token);
 	}
 	private storeToken(token: string) {
-		if (typeof window !== "undefined") {
-			localStorage.setItem("oa_token", token);
-		}
+		this.storage.set(AUTH_STORAGE_KEYS.token, token);
 	}
 	private removeToken() {
-		if (typeof window !== "undefined") {
-			localStorage.removeItem("oa_token");
-		}
+		this.storage.remove(AUTH_STORAGE_KEYS.token);
 	}
 	private getStoredRefreshToken(): string | null {
-		return typeof window !== "undefined"
-			? localStorage.getItem("oa_refresh_token")
-			: null;
+		return this.storage.get(AUTH_STORAGE_KEYS.refresh);
 	}
 	private storeRefreshToken(refreshToken: string) {
-		if (typeof window !== "undefined") {
-			localStorage.setItem("oa_refresh_token", refreshToken);
-		}
+		this.storage.set(AUTH_STORAGE_KEYS.refresh, refreshToken);
 	}
 	private removeRefreshToken() {
-		if (typeof window !== "undefined") {
-			localStorage.removeItem("oa_refresh_token");
-		}
+		this.storage.remove(AUTH_STORAGE_KEYS.refresh);
 	}
 
 	/**
@@ -1887,26 +1883,19 @@ export class OpenAuthsterClient<
 	 * @returns The expiration time as a timestamp in milliseconds, or null if not found or invalid.
 	 */
 	private getStoredExpiresAt(): Date | null {
-		const stored =
-			typeof window !== "undefined"
-				? localStorage.getItem("oa_expires_at")
-				: null;
+		const stored = this.storage.get(AUTH_STORAGE_KEYS.expiresAt);
 		if (!stored) return null;
 		const expiresAt = parseInt(stored, 10);
 		return Number.isNaN(expiresAt) ? null : new Date(expiresAt);
 	}
 	/**
-	 * Store the expiration time as a timestamp in milliseconds in local storage. The client will use this to determine when to attempt token refreshes. If the client is closed and reopened, it will check the stored expiration time to determine if the token is still valid or if it needs to be refreshed immediately.
-	 *
-	 * **Browser Only**
+	 * Store the expiration time as a timestamp in milliseconds in the auth storage adapter. The client will use this to determine when to attempt token refreshes. If the client is closed and reopened, it will check the stored expiration time to determine if the token is still valid or if it needs to be refreshed immediately.
 	 */
 	private storeExpiresAt(expiresAt: number) {
-		if (typeof window === "undefined") return;
-		localStorage.setItem("oa_expires_at", expiresAt.toString());
+		this.storage.set(AUTH_STORAGE_KEYS.expiresAt, expiresAt.toString());
 	}
 	private removeStoredExpiresAt() {
-		if (typeof window === "undefined") return;
-		localStorage.removeItem("oa_expires_at");
+		this.storage.remove(AUTH_STORAGE_KEYS.expiresAt);
 	}
 	private triggerError(err: ErrorList) {
 		this.onError?.(err);

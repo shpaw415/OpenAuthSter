@@ -78,6 +78,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 			{ name: "Copy Text", href: "/dashboard/copy", icon: "lucide:file-text" },
 			{ name: "Users", href: "/dashboard/users", icon: "lucide:users" },
 			{ name: "Logs", href: "/dashboard/activity", icon: "lucide:activity" },
+			{ name: "SDKs", href: "/dashboard/sdks", icon: "lucide:terminal" },
 			{
 				name: "Configurations",
 				href: "/dashboard/configurations",
@@ -122,12 +123,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 		const originalPushState = window.history.pushState;
 		const originalReplaceState = window.history.replaceState;
 
-		window.history.pushState = function (...args) {
+		window.history.pushState = (...args) => {
 			originalPushState.apply(window.history, args);
 			closeMenuOnLocationChange();
 		};
 
-		window.history.replaceState = function (...args) {
+		window.history.replaceState = (...args) => {
 			originalReplaceState.apply(window.history, args);
 			closeMenuOnLocationChange();
 		};

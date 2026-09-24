@@ -8,6 +8,7 @@ Shared TypeScript types, database schemas, provider definitions, and client SDK 
 - **Database schemas** - Drizzle ORM schemas and helpers for the issuer's D1 database
 - **Low-level client** (`openauthster-shared/client`) - Thin wrapper around `@kagii/openauth` that injects `client_id`, optional `copy_id`, and the cookie expected by the issuer
 - **OpenAuthsterClient** (`openauthster-shared/client/user`) - High-level client class for login, callback handling, token storage, refresh, session management, admin helpers, MFA, and passkey flows
+- **CLI SDK** (`openauthster-shared/client/cli`) - Public loopback PKCE client with the same access-token and refresh-token flow
 - **Webhook helpers** (`openauthster-shared/webhook`) - Typed webhook payload verification helpers and webhook event definitions
 
 ## Installation
@@ -725,6 +726,9 @@ openauthster-shared/          # workspace folder: openauthster-shared
 ├── client/
 │   ├── index.ts              # Low-level createClient / createServerClient helpers
 │   ├── user.ts               # OpenAuthsterClient + createOpenAuthsterClient
+│   ├── storage.ts            # Auth storage adapter (browser or memory)
+│   ├── file-storage.ts       # Owner-only file adapter for CLI tokens
+│   └── cli.ts                # Loopback PKCE CLI client
 │   └── mfa/                  # TOTP helpers used by the high-level client
 ├── client/passkey.ts         # Passkey helper used by the high-level client
 ├── database/

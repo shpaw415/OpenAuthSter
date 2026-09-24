@@ -35,6 +35,8 @@
 		"./endpoints": "./database/endpoints.ts",
 		"./client": "./client/index.ts",
 		"./client/user": "./client/user.ts",
+		"./client/cli": "./client/cli.ts",
+		"./client/storage": "./client/storage.ts",
 		"./client/mfa": "./client/mfa/index.ts",
 		"./client/errors": "./client/errors.ts",
 		"./utils": "./utils.ts",

@@ -10,7 +10,7 @@ OpenAuthster provides developers with a ready-to-deploy authentication solution 
 - 🏢 **Multi-Tenant Support** - Manage multiple projects/applications from a single deployment
 - 🎨 **Web UI Dashboard** - Configure themes, providers, and project settings
 - ☁️ **Cloudflare Workers** - Edge-deployed for low latency worldwide
-- 📦 **SDKs** — TypeScript (`openauthster-shared`), Swift (`sdk/ios`), Kotlin (`sdk/android`)
+- 📦 **SDKs** — TypeScript (`openauthster-shared`), CLI (`openauthster-shared/client/cli`), Swift (`sdk/ios`), Kotlin (`sdk/android`)
 
 ## Architecture
 
@@ -60,6 +60,7 @@ This repository is a **Bun monorepo**. See `MONOREPO.md`.
 | `packages/shared` | `openauthster-shared` | Types, D1 schema, TS client |
 | `sdk/ios` | Swift Package | Public PKCE client |
 | `sdk/android` | Kotlin library | Public PKCE client |
+| `sdk/cli` | `openauthster-shared/client/cli` | Public loopback PKCE client |
 
 Docs remain at [openauthster-doc](https://github.com/shpaw415/openauthster-doc). React helper remains [openauth-react](https://github.com/shpaw415/openauth-react) until it is imported.
 

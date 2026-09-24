@@ -8,6 +8,7 @@ apps/webui/           OpenAuthSter-webUI (Cloudflare Pages)
 packages/shared/      openauthster-shared (npm)
 sdk/ios/              Swift Package (SPM)
 sdk/android/          Kotlin library
+sdk/cli/              CLI guide; implementation is `openauthster-shared/client/cli`
 ```
 
 `openauthster-doc` stays a sibling repo. The tester app was not on GitHub (`openauth-webui-tester` missing); `apps/tester` is reserved.

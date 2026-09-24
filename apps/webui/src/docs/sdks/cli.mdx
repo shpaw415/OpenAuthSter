@@ -1,0 +1,93 @@
+# CLI SDK
+
+Use the CLI SDK for terminal tools that need the same OpenAuthster session as a browser or native app: an authorization-code login, an access token, and a refresh token.
+
+The CLI is a **public** client. Do not put `project.secret` in the binary, a config file, or the token store.
+
+## Project setup
+
+1. In project data, set `clientType` to `public`.
+2. Leave the project secret on the server.
+3. Ephemeral loopback callbacks on `http://127.0.0.1` and `http://localhost` are already allowed. You do not need to register each random callback port.
+
+## Install
+
+The SDK ships with `openauthster-shared`.
+
+```ts
+import { OpenAuthsterCliClient } from "openauthster-shared/client/cli";
+```
+
+## Sign in
+
+`login()` binds `127.0.0.1`, starts PKCE (`S256`), opens the issuer authorize URL, and exchanges the callback code for tokens.
+
+```ts
+const auth = new OpenAuthsterCliClient({
+  issuer: "https://auth.example.com",
+  clientID: "my_cli",
+});
+
+await auth.login({ provider: "github" });
+const access = await auth.getValidAccessToken();
+```
+
+`provider` is optional. Omit it to show the issuer's provider picker.
+
+## Access and refresh tokens
+
+Tokens use the same storage keys as the browser client:
+
+| Key | Meaning |
+| --- | --- |
+| `oa_token` | Access token |
+| `oa_refresh_token` | Refresh token |
+| `oa_expires_at` | Access-token expiry, in milliseconds |
+| `oa_challenge` | PKCE challenge, removed after the code exchange |
+
+The default file is `~/.openauthster/<clientID>.json`, mode `0600`. Pass `tokenPath` or a custom `storage` adapter to move it.
+
+`getValidAccessToken()` returns the stored access token while it has more than 30 seconds left. Otherwise it calls the issuer token endpoint with `grant_type=refresh_token` and stores the new pair. Overlapping refreshes share one in-flight request.
+
+## Headless and SSH
+
+Print the authorize URL instead of opening a browser, then finish the flow in any browser that can reach the loopback port:
+
+```ts
+await auth.login({
+  open: false,
+  onAuthorize: (url) => {
+    console.log(url);
+  },
+});
+```
+
+## Session and logout
+
+```ts
+const session = await auth.getPublicSession();
+auth.logout();
+```
+
+`getPublicSession()` sends `Authorization: Bearer <access>` to `GET /session/public`. `logout()` deletes the access token, refresh token, expiry, and challenge. It does not revoke the refresh token on the issuer.
+
+## Custom storage
+
+Browser apps can pass the same adapter into `createOpenAuthsterClient({ storage })`. CLI apps can use the file adapter directly:
+
+```ts
+import { fileAuthStorage, OpenAuthsterCliClient } from "openauthster-shared/client/cli";
+
+const auth = new OpenAuthsterCliClient({
+  issuer: "https://auth.example.com",
+  clientID: "my_cli",
+  storage: fileAuthStorage("/var/lib/my-cli/auth.json"),
+});
+```
+
+## What the callback checks
+
+- The listener binds only `127.0.0.1` or `localhost`.
+- The callback `state` must match the authorize request.
+- The code is exchanged with the PKCE verifier. The project secret is never sent.
+- The success page does not include the tokens.
