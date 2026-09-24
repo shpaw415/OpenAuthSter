@@ -50,7 +50,15 @@ const fetcher = ({
 
 		const headers = new Headers(init?.headers || {});
 
-		const url = new URL(raw);
+		let url: URL;
+		try {
+			url = new URL(raw);
+		} catch (error) {
+			throw new TypeError(
+				`Cannot fetch ${raw || "missing URL"}; issuer discovery did not return an absolute jwks_uri`,
+				error instanceof Error ? { cause: error } : undefined,
+			);
+		}
 		url.searchParams.set("client_id", clientID);
 		if (copyID) {
 			url.searchParams.set("copy_id", copyID);

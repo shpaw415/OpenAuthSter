@@ -51,26 +51,30 @@ export async function onRequest(
 		return await context.next();
 	}
 
-	const auth = await createClient({
-		clientID: context.env.PUBLIC_CLIENT_ID,
-		issuerURI: context.env.PUBLIC_ISSUER,
-		redirectURI: context.env.PUBLIC_REDIRECT_URI,
-		secret: context.env.WEBUI_SECRET,
-	}).setTokenFromRequest(context.request as unknown as Request);
-
-	if (!auth.isAuthenticated) {
-		return new Response("Unauthorized", { status: 401 });
-	}
-
-	context.data.client = auth;
-
 	try {
+		const auth = await createClient({
+			clientID: context.env.PUBLIC_CLIENT_ID,
+			issuerURI: context.env.PUBLIC_ISSUER,
+			redirectURI: context.env.PUBLIC_REDIRECT_URI,
+			secret: context.env.WEBUI_SECRET,
+		}).setTokenFromRequest(context.request as unknown as Request);
+
+		if (!auth.isAuthenticated) {
+			return new Response("Unauthorized", { status: 401 });
+		}
+
+		context.data.client = auth;
 		return await context.next();
 	} catch (err) {
-		if (err instanceof Error) {
-			console.error("Error in API middleware:", err);
-			return new Response("Internal Server Error", { status: 500 });
+		console.error("Error in API middleware:", err);
+		const message = err instanceof Error ? err.message : String(err);
+		if (
+			message.includes("Failed to verify token") ||
+			message.includes("Invalid URL") ||
+			message.includes("jwks")
+		) {
+			return new Response("Unauthorized", { status: 401 });
 		}
-		return new Response("Unknown error", { status: 500 });
+		return new Response("Internal Server Error", { status: 500 });
 	}
 }

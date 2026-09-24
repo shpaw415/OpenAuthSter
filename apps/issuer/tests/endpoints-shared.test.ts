@@ -3,6 +3,7 @@ import type { Project } from "openauthster-shared";
 import {
 	getSecretFromRequest,
 	getTokenFromRequest,
+	isWellKnownRequest,
 } from "../src/endpoints/shared";
 
 const project = {
@@ -31,6 +32,22 @@ async function createSignature(timestamp: string, secret = project.secret) {
 }
 
 describe("endpoint shared helpers", () => {
+	it("treats absolute well-known URLs as public discovery", () => {
+		expect(
+			isWellKnownRequest(
+				"https://auth-issuer.m2-tech.ca/.well-known/oauth-authorization-server",
+			),
+		).toBe(true);
+		expect(
+			isWellKnownRequest(
+				"https://auth-issuer.m2-tech.ca/.well-known/jwks.json",
+			),
+		).toBe(true);
+		expect(isWellKnownRequest("https://auth-issuer.m2-tech.ca/token")).toBe(
+			false,
+		);
+	});
+
 	it("extracts a bearer token from the authorization header", () => {
 		const token = getTokenFromRequest(
 			new Request("http://localhost/session/public", {

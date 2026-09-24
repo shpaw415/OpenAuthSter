@@ -1,5 +1,13 @@
 import type { Project } from "openauthster-shared";
 
+export function isWellKnownRequest(url: string): boolean {
+	try {
+		return new URL(url).pathname.startsWith("/.well-known/");
+	} catch {
+		return url.startsWith("/.well-known/");
+	}
+}
+
 export function getTokenFromRequest(request: Request): string | null {
 	const header = request.headers.get("Authorization");
 	if (!header?.startsWith("Bearer ")) {

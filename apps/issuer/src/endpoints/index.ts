@@ -83,7 +83,11 @@ import { log, toAuthorizeOrigin } from "../share";
 import { PartialRequestError, RequestError } from "./error";
 import { IniviteManager } from "./invite";
 import { encryptData, verifyData } from "./security";
-import { getSecretFromRequest, getTokenFromRequest } from "./shared";
+import {
+	getSecretFromRequest,
+	getTokenFromRequest,
+	isWellKnownRequest,
+} from "./shared";
 import type { EndpointCtx, EndpointVariables, Params } from "./types";
 
 type UserResponseSchemaType = _UserResponseSchemaType<
@@ -1025,7 +1029,7 @@ endpoints.delete("/manage/user", async (c) => {
 endpoints.use(
 	"*",
 	createMiddleware(async (c, next) => {
-		if (c.req.url.startsWith("/.well-known/")) return next(); // skip for well-known endpoints
+		if (isWellKnownRequest(c.req.url)) return next();
 		const params: Params = c.get("params");
 
 		if (!params.clientID) {
