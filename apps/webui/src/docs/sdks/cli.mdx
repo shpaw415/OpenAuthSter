@@ -51,7 +51,7 @@ The default file is `~/.openauthster/<clientID>.json`, mode `0600`. Pass `tokenP
 
 ## Headless and SSH
 
-Print the authorize URL instead of opening a browser, then finish the flow in any browser that can reach the loopback port:
+Print the authorize URL instead of opening a browser. If the browser cannot reach the CLI loopback (SSH, a remote machine), paste the redirected callback URL or the `code` query value. The CLI exchanges that code with the same PKCE verifier and redirect URI.
 
 ```ts
 await auth.login({
@@ -59,8 +59,13 @@ await auth.login({
   onAuthorize: (url) => {
     console.log(url);
   },
+  readCode: async () => {
+    return prompt("Paste the callback URL or code: ") ?? "";
+  },
 });
 ```
+
+The address bar still contains the code when the local page fails to load. Paste that full URL.
 
 ## Session and logout
 

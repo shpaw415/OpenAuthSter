@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, mock } from "bun:test";
 import {
+	callbackCodeFromInput,
 	CliAuthError,
 	OpenAuthsterCliClient,
 } from "../../client/cli.ts";
@@ -145,6 +146,53 @@ describe("OpenAuthsterCliClient", () => {
 
 		expect(await client.getValidAccessToken()).toBe("access-2");
 		expect(storage.get(AUTH_STORAGE_KEYS.refresh)).toBe("refresh-2");
+	});
+
+	it("exchanges a pasted callback URL without a loopback request", async () => {
+		const storage = memoryAuthStorage();
+		const client = new OpenAuthsterCliClient({
+			issuer: "https://auth.example",
+			clientID: "cli_app",
+			storage,
+			timeoutMs: 2000,
+			open: async () => {
+				throw new Error("browser should not open");
+			},
+		});
+		let redirectURI = "";
+		let state = "";
+		globalThis.fetch = mock(async (input: RequestInfo | URL, init?: RequestInit) => {
+			const url = String(input);
+			if (url.includes("/token")) {
+				const body = String(init?.body);
+				expect(body).toContain("code=pasted-code");
+				expect(body).toContain(
+					`redirect_uri=${encodeURIComponent(redirectURI)}`,
+				);
+				expect(body).not.toContain("client_secret");
+				return tokenResponse({
+					access_token: "access-pasted",
+					refresh_token: "refresh-pasted",
+					expires_in: 900,
+				});
+			}
+			return tokenResponse({ error: "not_found" }, 404);
+		}) as unknown as typeof fetch;
+
+		const tokens = await client.login({
+			open: false,
+			onAuthorize: (url) => {
+				const auth = new URL(url);
+				redirectURI = auth.searchParams.get("redirect_uri") || "";
+				state = auth.searchParams.get("state") || "";
+			},
+			readCode: async () => `${redirectURI}?code=pasted-code&state=${state}`,
+		});
+		expect(tokens.access).toBe("access-pasted");
+		expect(callbackCodeFromInput("raw-code")).toBe("raw-code");
+		expect(() =>
+			callbackCodeFromInput(`${redirectURI}?code=x&state=wrong`, state),
+		).toThrow(CliAuthError);
 	});
 
 	it("times out when the browser never returns", async () => {

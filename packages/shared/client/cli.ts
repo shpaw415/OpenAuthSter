@@ -43,7 +43,50 @@ export type CliLoginOptions = {
 	copyID?: string | null;
 	open?: boolean;
 	onAuthorize?: (url: string) => void | Promise<void>;
+	readCode?: (signal: AbortSignal) => Promise<string>;
 };
+
+export function callbackCodeFromInput(
+	input: string,
+	expectedState?: string,
+): string {
+	const trimmed = input.trim();
+	if (!trimmed) {
+		throw new CliAuthError("Missing authorization code", "missing_code");
+	}
+	const asUrl = callbackUrl(trimmed);
+	if (!asUrl) return trimmed;
+	const error = asUrl.searchParams.get("error");
+	if (error) {
+		throw new CliAuthError(
+			asUrl.searchParams.get("error_description") || error,
+			"cancelled",
+		);
+	}
+	const code = asUrl.searchParams.get("code");
+	if (!code) throw new CliAuthError("Callback URL has no code", "missing_code");
+	const state = asUrl.searchParams.get("state");
+	if (expectedState && state !== expectedState) {
+		throw new CliAuthError("State mismatch", "state_mismatch");
+	}
+	return code;
+}
+
+function callbackUrl(input: string): URL | null {
+	if (input.startsWith("?")) {
+		return new URL(`http://127.0.0.1/callback${input}`);
+	}
+	if (!input.includes("://") && !input.startsWith("/")) return null;
+	try {
+		const url = new URL(input, "http://127.0.0.1");
+		if (!url.searchParams.has("code") && !url.searchParams.has("error")) {
+			return null;
+		}
+		return url;
+	} catch {
+		return null;
+	}
+}
 
 export type OpenAuthsterCliOptions = {
 	issuer: string;
@@ -266,7 +309,11 @@ export class OpenAuthsterCliClient {
 				const open = this.options.open ?? openSystemBrowser;
 				await open(authURL.toString());
 			}
-			const code = await loopback.wait;
+			const code = await this.waitForCode(
+				loopback.wait,
+				authorized.challenge.state,
+				loginOptions.readCode,
+			);
 			this.storage.remove(AUTH_STORAGE_KEYS.token);
 			this.storage.remove(AUTH_STORAGE_KEYS.refresh);
 			this.storage.remove(AUTH_STORAGE_KEYS.expiresAt);
@@ -286,6 +333,23 @@ export class OpenAuthsterCliClient {
 			this.storage.remove(AUTH_STORAGE_KEYS.challenge);
 			await loopback.close();
 		}
+	}
+
+	private async waitForCode(
+		loopbackCode: Promise<string>,
+		expectedState: string,
+		readCode?: (signal: AbortSignal) => Promise<string>,
+	): Promise<string> {
+		if (!readCode) return loopbackCode;
+		const abortPaste = new AbortController();
+		const fromLoopback = loopbackCode.finally(() => abortPaste.abort());
+		const fromPaste = readCode(abortPaste.signal)
+			.then((raw) => callbackCodeFromInput(raw, expectedState))
+			.catch((error) => {
+				if (abortPaste.signal.aborted) return new Promise<string>(() => {});
+				throw error;
+			});
+		return Promise.race([fromLoopback, fromPaste]);
 	}
 
 	async getValidAccessToken(): Promise<string> {
