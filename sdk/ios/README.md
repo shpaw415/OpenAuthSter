@@ -8,4 +8,4 @@ Do not put `project.secret` in the app. Register `clientType: "public"` and this
 .package(url: "https://github.com/shpaw415/OpenAuthSter.git", from: "1.0.2")
 ```
 
-Target path: `sdk/ios`.
+Target path: `sdk/ios`. Dashboard guide: `/dashboard/sdks#ios`.

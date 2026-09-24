@@ -1,0 +1,80 @@
+# iOS SDK
+
+Use the iOS SDK for a public native app that needs an authorization-code login, an access token, and a refresh token.
+
+The SDK is a **public** client. Do not put `project.secret` in the app binary, a plist, or the Keychain item.
+
+## Project setup
+
+1. In project data, set `clientType` to `public`.
+2. Leave the project secret on the server.
+3. Add the app redirect URI to Allow Origin URL. A custom-scheme redirect is matched as that exact URI, not as an origin. `myapp://auth/callback` does not allow `myapp://other`. A trailing slash is ignored.
+
+## Install
+
+The Swift package is `sdk/ios` (iOS 16, macOS 13). Add that directory as a local package. The product name is `OpenAuthster`.
+
+```swift
+.package(path: "path/to/OpenAuthSter/sdk/ios")
+```
+
+Register the redirect scheme so the session can return to the app. The scheme must be `redirectURI.scheme`.
+
+```xml
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+    <key>CFBundleURLSchemes</key>
+    <array>
+      <string>myapp</string>
+    </array>
+  </dict>
+</array>
+```
+
+## Sign in
+
+`login` runs on the main actor. It starts PKCE (`S256`), opens the issuer authorize URL in `ASWebAuthenticationSession`, and exchanges the callback code. The browser session is ephemeral, so it does not share Safari cookies.
+
+```swift
+let auth = OpenAuthsterClient(
+  config: OpenAuthsterConfig(
+    issuer: URL(string: "https://auth.example.com")!,
+    clientID: "my_ios",
+    redirectURI: URL(string: "myapp://auth/callback")!
+  )
+)
+
+try await auth.login(provider: "github", anchor: window)
+let access = try auth.accessToken()
+```
+
+`provider` is optional. Omit it to show the issuer's provider picker. `anchor` is the window that presents the session.
+
+## Access and refresh tokens
+
+Tokens are JSON in the Keychain. The service is `openauthster.<clientID>` and the account is `tokens`.
+
+| Field | Meaning |
+| --- | --- |
+| `access` | Access token |
+| `refresh` | Refresh token, when the issuer returns one |
+| `expiresAt` | Access-token expiry |
+
+`accessToken()` returns the stored access token. It does not call the token endpoint again. `isAuthenticated` is true when that token is non-empty.
+
+## Session and logout
+
+```swift
+let session = try await auth.getPublicSession()
+try auth.logout()
+```
+
+`getPublicSession()` sends `Authorization: Bearer <access>` to `GET /session/public/<clientID>` and returns the response body. `logout()` deletes the Keychain item. It does not revoke the refresh token on the issuer.
+
+## What the callback checks
+
+- The session callback scheme is `redirectURI.scheme`.
+- The callback must include `code`.
+- The code is exchanged with the PKCE verifier. The project secret is never sent.
+- A non-2xx token response throws `OpenAuthsterError.http`.

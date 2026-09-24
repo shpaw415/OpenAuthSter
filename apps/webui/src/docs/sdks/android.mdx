@@ -1,0 +1,94 @@
+# Android SDK
+
+Use the Android SDK for a public native app that needs an authorization-code login, an access token, and a refresh token.
+
+The SDK is a **public** client. Do not put `project.secret` in the app binary or in preferences.
+
+## Project setup
+
+1. In project data, set `clientType` to `public`.
+2. Leave the project secret on the server.
+3. Add the app redirect URI to Allow Origin URL. A custom-scheme redirect is matched as that exact URI, not as an origin. `myapp://auth/callback` does not allow `myapp://other`. A trailing slash is ignored.
+
+## Install
+
+The library module is `sdk/android/openauthster` (`minSdk` 26, `compileSdk` 35). It is not a Maven artifact. Include that module from the app.
+
+```kotlin
+include(":openauthster")
+project(":openauthster").projectDir =
+  file("path/to/OpenAuthSter/sdk/android/openauthster")
+```
+
+```kotlin
+dependencies {
+  implementation(project(":openauthster"))
+}
+```
+
+The library manifest is empty. Declare the redirect on the activity that receives it:
+
+```xml
+<intent-filter>
+  <action android:name="android.intent.action.VIEW" />
+  <category android:name="android.intent.category.DEFAULT" />
+  <category android:name="android.intent.category.BROWSABLE" />
+  <data
+    android:scheme="myapp"
+    android:host="auth"
+    android:path="/callback" />
+</intent-filter>
+```
+
+## Sign in
+
+`launchLogin` stores a PKCE verifier (`S256`), then opens the issuer authorize URL in a Chrome Custom Tab.
+
+```kotlin
+val auth = OpenAuthsterClient(
+  context,
+  OpenAuthsterConfig(
+    issuer = Uri.parse("https://auth.example.com"),
+    clientId = "my_android",
+    redirectUri = Uri.parse("myapp://auth/callback"),
+  ),
+)
+
+auth.launchLogin(context, provider = "github")
+```
+
+`provider` is optional. Omit it to show the issuer's provider picker. `loginIntent` returns the Custom Tab intent and the verifier if the app launches the tab itself.
+
+When the redirect arrives, exchange the code. `handleCallback` runs the token request on the calling thread.
+
+```kotlin
+auth.handleCallback(intent.data ?: return)
+val access = auth.accessToken()
+```
+
+## Access and refresh tokens
+
+Tokens are stored in `EncryptedSharedPreferences`, file `openauthster.<clientId>`.
+
+| Key | Meaning |
+| --- | --- |
+| `access` | Access token |
+| `refresh` | Refresh token, when the issuer returns one |
+| `expires` | Access-token expiry, in milliseconds |
+| `verifier` | PKCE verifier, kept until the code exchange |
+
+`accessToken()` returns the stored access token. It does not call the token endpoint again. `isAuthenticated` is true when that token is non-empty.
+
+## Logout
+
+```kotlin
+auth.logout()
+```
+
+`logout()` clears that preference file, including the verifier. It does not revoke the refresh token on the issuer.
+
+## What the callback checks
+
+- The callback must include `code`.
+- A verifier from `launchLogin` or `loginIntent` must already be stored.
+- The code is exchanged with that verifier. The project secret is never sent.
