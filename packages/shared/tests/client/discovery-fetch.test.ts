@@ -70,4 +70,46 @@ describe("discovery fetch", () => {
 			),
 		).toBe(true);
 	});
+
+	it("retries discovery with client_id when the issuer omits jwks_uri", async () => {
+		const urls: string[] = [];
+		global.fetch = mock(async (input: RequestInfo | URL) => {
+			const url = String(input);
+			urls.push(url);
+			if (!url.includes("client_id=")) {
+				return new Response(
+					JSON.stringify({ error: "Unauthorized: Missing client ID" }),
+					{ status: 401 },
+				);
+			}
+			if (url.includes("oauth-authorization-server")) {
+				return new Response(
+					JSON.stringify({
+						issuer: "http://issuer.com",
+						jwks_uri: "http://issuer.com/.well-known/jwks.json",
+						token_endpoint: "http://issuer.com/token",
+						authorization_endpoint: "http://issuer.com/authorize",
+					}),
+				);
+			}
+			return new Response(JSON.stringify({ keys: [] }));
+		}) as unknown as typeof fetch;
+
+		const client = createClient({
+			clientID: "openauth_webui",
+			issuer: "http://issuer.com",
+		});
+		await client.verify(subjects, "not-a-jwt");
+
+		expect(urls.some((url) => url.includes("client_id=openauth_webui"))).toBe(
+			true,
+		);
+		expect(
+			urls.some(
+				(url) =>
+					url.includes("/.well-known/jwks.json") &&
+					url.includes("client_id=openauth_webui"),
+			),
+		).toBe(true);
+	});
 });

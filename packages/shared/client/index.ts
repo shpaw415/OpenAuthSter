@@ -35,30 +35,54 @@ export function isDiscoveryUrl(url: string): boolean {
 	}
 }
 
+function isAbsoluteHttp(value: string): boolean {
+	return value.startsWith("http://") || value.startsWith("https://");
+}
+
+function withClientId(raw: string, clientID: string): string {
+	const url = new URL(raw);
+	url.searchParams.set("client_id", clientID);
+	return url.toString();
+}
+
+async function discoveryDocumentIsUsable(response: Response): Promise<boolean> {
+	if (!response.ok) return false;
+	try {
+		const body = (await response.clone().json()) as {
+			jwks_uri?: unknown;
+			keys?: unknown;
+		};
+		if (!body || typeof body !== "object") return false;
+		if ("keys" in body) return Array.isArray(body.keys);
+		if ("jwks_uri" in body) return typeof body.jwks_uri === "string" && isAbsoluteHttp(body.jwks_uri);
+		return false;
+	} catch {
+		return false;
+	}
+}
+
 const fetcher = ({
 	clientID,
+	issuer,
 	copyID,
 }: {
 	clientID: string;
+	issuer: string;
 	copyID?: string | null;
 }) => {
 	return async (input: RequestInfo | URL, init?: RequestInit) => {
 		const raw = requestUrl(input);
-		if (isDiscoveryUrl(raw)) {
-			return fetch(input, init);
+		if (isDiscoveryUrl(raw) || !isAbsoluteHttp(raw)) {
+			const discoveryUrl = isDiscoveryUrl(raw)
+				? raw
+				: new URL("/.well-known/jwks.json", issuer).toString();
+			const plain = await fetch(discoveryUrl, init);
+			if (await discoveryDocumentIsUsable(plain)) return plain;
+			return fetch(withClientId(discoveryUrl, clientID), init);
 		}
 
 		const headers = new Headers(init?.headers || {});
-
-		let url: URL;
-		try {
-			url = new URL(raw);
-		} catch (error) {
-			throw new TypeError(
-				`Cannot fetch ${raw || "missing URL"}; issuer discovery did not return an absolute jwks_uri`,
-				error instanceof Error ? { cause: error } : undefined,
-			);
-		}
+		const url = new URL(raw);
 		url.searchParams.set("client_id", clientID);
 		if (copyID) {
 			url.searchParams.set("copy_id", copyID);
@@ -85,7 +109,7 @@ export const createClient = ({
 	_createClient({
 		clientID,
 		issuer,
-		fetch: fetcher({ clientID, copyID }),
+		fetch: fetcher({ clientID, issuer, copyID }),
 	});
 
 export function createServerClient({
@@ -103,6 +127,10 @@ export function createServerClient({
 	return _createClient({
 		clientID: resolvedClientID,
 		issuer,
-		fetch: fetcher({ clientID: resolvedClientID, copyID: resolvedCopyID }),
+		fetch: fetcher({
+			clientID: resolvedClientID,
+			issuer,
+			copyID: resolvedCopyID,
+		}),
 	});
 }
